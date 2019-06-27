@@ -1,6 +1,7 @@
 # Flask学习
 ## 安装所需要的包
-在PyCharm的Terminal里执行下面的命令\
+[数据库设计工具](https://ondras.zarovi.cz/sql/demo/)  
+在PyCharm的Terminal里执行下面的命令  
 pip install -r install.txt
 ## [数据库](https://github.com/luhuisicnu/The-Flask-Mega-Tutorial-zh/blob/master/docs/%E7%AC%AC%E5%9B%9B%E7%AB%A0%EF%BC%9A%E6%95%B0%E6%8D%AE%E5%BA%93.md)
 ### 初始化
