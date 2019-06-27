@@ -1,0 +1,14 @@
+flask
+python-dotenv
+flask-wtf
+flask-sqlalchemy
+flask-migrate
+flask-login
+flask-mail
+pyjwt
+flask-bootstrap
+flask-moment
+flask-babel
+guess-language_spirit
+requests
+elasticsearch
