@@ -7,10 +7,9 @@
 @Software: PyCharm
 @Desc    : 数据库模型
 """
+import jwt
 from datetime import datetime
 from time import time
-
-import jwt
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
 from hashlib import md5

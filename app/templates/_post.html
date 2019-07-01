@@ -1,12 +1,23 @@
-<!--_前缀只是一个命名约定，可以帮助我识别哪些模板文件是子模板-->
-<table>
-    <tr valign="top">
-        <td><img src="{{ post.author.avatar(36) }}"></td>
+{#_前缀只是一个命名约定，可以帮助我识别哪些模板文件是子模板#}
+<table class="table table-hover">
+    <tr> {# <tr>是一行</tr> #}
+        <td width="50px">
+            <a href="{{ url_for('user', username=post.author.username) }}">
+                {# 设置图标为圆形 #}
+                <div style="width: 50px;height: 50px; border-radius:50%;overflow: hidden;">
+                    <img src="{{ post.author.avatar(50) }}"/>
+                </div>
+            </a>
+        </td>
         <td>
+            {% set user_link %} {# 类似定义了一个变量 #}
             <a href="{{ url_for('user',username=post.author.username) }}">
                 {{ post.author.username }}
             </a>
-            says:<br>{{ post.body }}
+            {% endset %}
+            {#fromNow()显示该博客发布到现在的时间#}
+            {{ _('%(username)s said %(when)s', username=user_link, when=moment(post.timestamp).fromNow()) }}<br>
+            {{ post.body }}
         </td>
     </tr>
 </table>

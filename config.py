@@ -40,3 +40,10 @@ class Config(object):
 
     # 表示主页每页展示的数据列表长度
     POSTS_PER_PAGE = 25
+
+    # 跟踪支持的语言列表
+    LANGUAGES = ['zh', 'en', 'es']  # 中文，英文，西班牙文
+
+    # Elasticsearch 配置。
+    # ELASTICSEARCH_URL = os.environ.get('ELASTICSEARCH_URL')  # 如果变量未定义，我将设置其为None，并将其用作禁用Elasticsearch的信号
+    ELASTICSEARCH_URL = 'http: // localhost: 5000'

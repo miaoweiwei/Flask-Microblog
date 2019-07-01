@@ -1,41 +1,61 @@
-{#这个HTML页面看起来非常简单，#}
-{#唯一值得关注的地方是{{ ... }}。{{ ... }}包含的内容是动态的，#}
-{#只有在运行时才知道具体表示成什么样子#}
-<!DOCTYPE html>
-<html>
-<head>
-    {% if title %}
-        <title>{{ title }} - Microblog</title>
-    {% else %}
-        <title>Microblog</title>
-    {% endif %}
-</head>
-<body>
-<div><!--导航栏-->
-    Microblog:
-    {# Flask提供了一个名为url_for()的函数，它使用URL到视图函数的内部映射关系来生成URL #}
-    {# 如url_for('login')返回/login，url_for('index')返回/index。 url_for()的参数是endpoint名称，也就是视图函数的名字。#}
-    <a href="{{ url_for('index') }}">Home</a>
-    <a href="{{ url_for('explore') }}">Explore</a> <!--发现页面-->
-    {% if current_user.is_anonymous %}
-        <a href="{{ url_for('login') }}">Login</a>
-    {% else %}
-        <!--由于这是一个指向当前登录个人主页的链接，我可以使用Flask-Login的current_user对象来生成正确的URL。-->
-        <a href="{{ url_for('user',username=current_user.username) }}">Profile</a>
-        <a href="{{ url_for('logout') }}">Logout</a>
-    {% endif %}
-</div>
-<hr> <!--水平线-->
-{# get_flashed_messages()函数返回用flash()注册过的消息列表 #}
-{% with messages = get_flashed_messages() %}
-    {% if messages %}
-        <ul>
-            {% for message in messages %}
-                <li> {{ message }}</li>
-            {% endfor %}
-        </ul>
-    {% endif %}
-{% endwith %}
-{% block content %}{% endblock %}
-</body>
-</html>
+{% extends 'bootstrap/base.html' %}
+{# Flask-Bootstrap派生的基础模板定义了一些块 #}
+{# 提供 title<Web标题>、navbar<导航栏>、content<页面>、scripts<js脚本> #}
+
+<!--页面主题-->
+{% block title %}
+    {% if title %}{{ title }} - Microblog{% else %}{{ _('Welcome to Microblog') }}{% endif %}
+{% endblock %}
+
+{% block navbar %} <!--导航栏-->
+    <nav class="navbar navbar-default">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+                        data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                    <span class="sr-only">{{ _('Toggle navigation') }}</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="{{ url_for('index') }}">Microblog</a>
+            </div>
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav">
+                    <li><a href="{{ url_for('index') }}">{{ _('Home') }}</a></li>
+                    <li><a href="{{ url_for('explore') }}">{{ _('Explore') }}</a></li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    {% if current_user.is_anonymous %}
+                        <li><a href="{{ url_for('login') }}">{{ _('Login') }}</a></li>
+                    {% else %}
+                        <li><a href="{{ url_for('user', username=current_user.username) }}">{{ _('Profile') }}</a></li>
+                        <li><a href="{{ url_for('logout') }}">{{ _('Logout') }}</a></li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        {# get_flashed_messages()函数返回用flash()注册过的消息列表 #}
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-info" role="alert">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        {# 页面 #}
+        {% block app_content %}{% endblock %}
+    </div>
+{% endblock %}
+
+{% block scripts %}<!--块是Flask-Bootstrap基础模板暴露的一个块-->
+    {#    与其他插件不同的是，Flask-Moment与moment.js一起工作，#}
+    {#    因此应用的所有模板都必须包含moment.js。为了确保该库始终可用，我将把它添加到基础模板中#}
+    {{ super() }}
+    {{ moment.include_moment() }} <!--它直接生成了一个<script>标签并在其中包含moment.js：-->
+{% endblock %}

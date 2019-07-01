@@ -12,7 +12,7 @@ from app import app, db
 
 
 @app.errorhandler(404)
-def not_found_erroe(error):
+def not_found_error(error):
     return render_template('404.html'), 404  # 404是错误代码，不加第二个参数默认是200表示成功响应的状态码
 
 

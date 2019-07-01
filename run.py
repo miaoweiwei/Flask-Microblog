@@ -12,7 +12,7 @@ http://localhost:5000
 另外你也可以使用这个 URL:
 http://localhost:5000/index
 """
-from app import app, db
+from app import app, db, cli
 from app.models import User, Post
 
 
@@ -26,5 +26,5 @@ def make_shell_context():
 
 
 if __name__ == '__main__':
-    app.run()
-    # app.run(debug=True)
+    # app.run()
+    app.run(debug=True)
