@@ -31,6 +31,7 @@ class Config(object):
     ADMINS = ['1353263604@qq.com', '1000460675 @ smail.shnu.edu.cn']  # ADMINS配置变量是将收到错误报告的电子邮件地址列表
 
     MAIL_SERVER = 'smtp.qq.com'  # 服务器
+    MAIL_SERVER = '.com'  # 服务器
     MAIL_USE_SSL = False
     MAIL_USE_TLS = True  # TLS 发送日志使用这种方式使用Message发送邮件也可以使用这种方式
     MAIL_PORT = 587

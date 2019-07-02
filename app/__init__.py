@@ -62,7 +62,8 @@ if not app.debug:
     # 记录日志
     if not os.path.exists('logs'):
         os.mkdir('logs')
-    file_handler = RotatingFileHandler('logs/microblog.log', maxBytes=10240, backupCount=10)
+    # 设置每个日志文件10M，总共备份10个日志文件
+    file_handler = RotatingFileHandler('logs/microblog.log', maxBytes=1024 * 1024 * 10, backupCount=10)
     file_handler.setFormatter(logging.Formatter('%(asctime)s %(levelname)s: %(message)s [in %(pathname)s:%(lineno)d]'))
     file_handler.setLevel(logging.INFO)
     app.logger.addHandler(file_handler)
