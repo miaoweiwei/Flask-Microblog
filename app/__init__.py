@@ -11,7 +11,9 @@ import os
 import logging
 from logging.handlers import SMTPHandler
 from logging.handlers import RotatingFileHandler
-from flask import Flask, request
+
+from elasticsearch import Elasticsearch
+from flask import Flask
 from flask_babel import Babel
 from flask_babel import lazy_gettext as _l  # 这个新函数将文本包装在一个特殊的对象中，这个对象会在稍后的字符串使用时触发翻译。
 from flask_bootstrap import Bootstrap
@@ -96,6 +98,12 @@ def get_locale():
 from app import routes, models, errors
 
 
+# 应用程序工厂函数
 def create_app(config_class=Config):
     app = Flask(__name__)
     app.config.from_object(config_class)
+    # 使用Elasticsearch面临着非Flask插件如何使用的挑战。
+    # 我不能像在上面的例子中那样在全局范围内创建Elasticsearch实例，
+    # 因为要初始化它，我需要访问app.config，它必须在调用create_app()
+    # 函数后才可用。 所以我决定在应用程序工厂函数中为app实例添加一个elasticsearch属性：
+    app.elasticsearch = Elasticsearch([app.config['ELASTICSEARCH_URL']]) if app.config['ELASTICSEARCH_URL'] else None

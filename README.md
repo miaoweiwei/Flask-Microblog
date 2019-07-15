@@ -228,3 +228,15 @@ pybabel extract命令读取-F选项中给出的配置文件，然后从命令给
     creating catalog app/translations/es/LC_MESSAGES/messages.po based on messages.pot
 </code>
 
+### 命令行增强
+
+在编辑好 app/cli.py 后 因为 FLASK_APP 默认为 FLASK_APP=hello.py,所以要先执行set FLASK_APP=run.py,然后在执行 flask --help 查看
+命令是否注册就会显示注册成功。注意使用PyCharm创建flask项目时会一起创建一个app.py.如果cli引入到app.py的使用上面的方法不行。
+cli要引入到其他的文件，可以另外新建一个run.py文件，把app,cli引入到其中,在使用命令 set FLASK_APP=run.py 和  flask --help 
+引入成功，执行命令
+<code>
+    
+    flask translate init zh #创建一个中文的翻译文件
+    flask translate update # 用于更新所有语言存储库
+    flask translate compile # 用于编译所有语言存储库
+</code>

@@ -5,7 +5,8 @@
 @Author  : miaoweiwei
 @File    : run.py
 @Software: PyCharm
-@Desc    :这个脚本简单地从我们的 app 包中导入 app 变量并且调用它的 run 方法来启动服务器。请记住 app 变量中含有我们在之前创建的 Flask 实例。
+@Desc    :这个脚本简单地从我们的 app 包中导入 app 变量并且调用它的 run 方法来启动服务器。
+请记住 app 变量中含有我们在之前创建的 Flask 实例。
 要启动应用程序，您只需运行此脚本（run.py）
 在服务器初始化后，它将会监听 5000 端口等待着连接。现在打开你的网页浏览器输入如下 URL:
 http://localhost:5000
