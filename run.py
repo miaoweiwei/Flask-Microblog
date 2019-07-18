@@ -13,6 +13,8 @@ http://localhost:5000
 另外你也可以使用这个 URL:
 http://localhost:5000/index
 """
+import requests
+import json
 from app import app, db, cli
 from app.models import User, Post
 
@@ -26,6 +28,21 @@ def make_shell_context():
     return {'db': db, 'User': User, 'Post': Post}
 
 
+print("run.py服务启动了")
+
+
+def TestTr():
+    r = requests.get("https://translate.google.cn/?hl=zh-CN&tab=TT0#view=home&op=translate&sl=auto&tl=zh-CN&text=hello")
+    if r.status_code != 200:
+        return _('Error : the translation service failed.')
+    return json.loads(r.content.decode('utf-8-sig'))
+
+
+# https://translate.google.cn/?hl=zh-CN&tab=TT0#view=home&op=translate&sl=auto&tl=zh-CN&text=hello
+
+
 if __name__ == '__main__':
-    # app.run()
+    print("run.py服务启动了")
+    TestTr()
+    # debug=True 会使在运行时若代码改动则会使项目重新启动，但这会使项目第一次启动时重启一次
     app.run(debug=True)

@@ -16,8 +16,19 @@
             </a>
             {% endset %}
             {#fromNow()显示该博客发布到现在的时间#}
-            {{ _('%(username)s said %(when)s', username=user_link, when=moment(post.timestamp).fromNow()) }}<br>
-            {{ post.body }}
+            {{ _('%(username)s said %(when)s', username=user_link, when=moment(post.timestamp).fromNow()) }}
+            <br>
+            <span id="post{{ post.id }}">{{ post.body }}</span>
+            {% if post.language and post.language != g.locale %}
+                <br><br>
+                <span id="translate{{ post.id }}">
+                <a href="javascript:translate(
+                '#post{{ post.id }}',
+                '#translation{{ post.id }}',
+                '{{ post.language }}',
+                '{{ g.locale }}');">{{ _('Translate') }}</a>
+            </span>
+            {% endif %}
         </td>
     </tr>
 </table>

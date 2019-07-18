@@ -11,6 +11,7 @@
 from flask import render_template, flash, redirect, url_for, request, g
 from flask_login import current_user, login_user, logout_user, login_required
 from flask_babel import _, get_locale
+from guess_language import guess_language
 from werkzeug.urls import url_parse
 from datetime import datetime
 from app import app
@@ -58,7 +59,10 @@ def logout():
 def index():
     form = PostForm()
     if form.validate_on_submit():
-        post = Post(body=form.post.data, author=current_user)
+        language = guess_language(form.post.data)  # 获取动态的语言类型
+        if language == 'UNKNOWN' or len(language) > 5:
+            language = ''
+        post = Post(body=form.post.data, author=current_user, language=language)
         db.session.add(post)
         db.session.commit()
         flash(_('Your post is now live!'))
@@ -211,6 +215,7 @@ def reset_password_request():
 
 @app.route('/reset_password/<token>', methods=['GET', 'POST'])
 def reset_password(token):
+    """重置密码"""
     if current_user.is_authenticated:  # 首先判断用户是否已经登录
         return redirect(url_for('index'))
     user = User.verify_reset_password_token(token)  # 验证令牌，获取需要从之密码的用户

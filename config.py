@@ -31,12 +31,11 @@ class Config(object):
     ADMINS = ['1353263604@qq.com', '1000460675 @ smail.shnu.edu.cn']  # ADMINS配置变量是将收到错误报告的电子邮件地址列表
 
     MAIL_SERVER = 'smtp.qq.com'  # 服务器
-    MAIL_SERVER = '.com'  # 服务器
     MAIL_USE_SSL = False
     MAIL_USE_TLS = True  # TLS 发送日志使用这种方式使用Message发送邮件也可以使用这种方式
     MAIL_PORT = 587
     MAIL_USERNAME = '1353263604@qq.com'
-    MAIL_PASSWORD = 'uhuobgoaynquhdeb'  # 该密码要到qq邮箱的设置中开启 POP3/SMTP 和 IMAP/SMTP
+    MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')  # 账号和密码最好放在环境变量中，放在这里容易泄露密码 该密码要到qq邮箱的设置中开启 POP3/SMTP 和 IMAP/SMTP
     FLASK_MAIL_SENDER = '1353263604@qq.com'
 
     # 表示主页每页展示的数据列表长度
@@ -44,6 +43,8 @@ class Config(object):
 
     # 跟踪支持的语言列表
     LANGUAGES = ['zh', 'en', 'es']  # 中文，英文，西班牙文
+
+    MS_TRANSLATE_KEY = os.environ.get("MS_TRANSLATE_KEY")  # 获取翻译api的key
 
     # Elasticsearch 配置。
     # ELASTICSEARCH_URL = os.environ.get('ELASTICSEARCH_URL')  # 如果变量未定义，我将设置其为None，并将其用作禁用Elasticsearch的信号

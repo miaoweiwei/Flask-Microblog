@@ -143,6 +143,7 @@ class Post(db.Model):
     # 通常，在服务应用中使用UTC日期和时间是推荐做法。 这可以确保你使用统一的时间戳，无论用户位于何处，这些时间戳会在显示时转换为用户的当地时间。
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))  # 初始化为user.id的外键,Flask-SQLAlchemy自动设置类名为小写来作为对应表的名称
+    language = db.Column(db.String(5))  # 用户发表的动态的语言类型
 
     def __repr__(self):
         return '<Post {}>'.format(self.body)

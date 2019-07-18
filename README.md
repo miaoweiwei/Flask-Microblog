@@ -66,6 +66,21 @@ INFO  [alembic.runtime.migration] Running upgrade  -> e517276bb1c2, users table
 
 正如我前面提到的，flask db downgrade命令可以回滚上次的迁移。 虽然在生产系统上不太可能需要此选项，但在开发过程中可能会发现它非常有用。 你可能已经生成了一个迁移脚本并将其应用，只是发现所做的更改并不完全是你所需要的。 在这种情况下，可以降级数据库，删除迁移脚本，然后生成一个新的来替换它。  
 
+### 数据库模型发生变化
+你一定还记得，每当数据库模型发生变化时，都需要生成数据库迁移，例如当Post表新增字段language时需要执行以下命令    
+
+(venv) $ flask db migrate -m "add language to posts"  
+INFO  [alembic.runtime.migration] Context impl SQLiteImpl. 
+INFO  [alembic.runtime.migration] Will assume non-transactional DDL.  
+INFO  [alembic.autogenerate.compare] Detected added column 'post.language'  
+  Generating migrations/versions/2b017edaa91f_add_language_to_posts.py ... done  
+
+然后将迁移应用到数据库：  
+
+(venv) $ flask db upgrade  
+INFO  [alembic.runtime.migration] Context impl SQLiteImpl.  
+INFO  [alembic.runtime.migration] Will assume non-transactional DDL.  
+INFO  [alembic.runtime.migration] Upgrade ae346256b650 -> 2b017edaa91f, add language to posts  
 
 # 密码重置令牌
  这个计划中棘手的部分是确保只有有效的重置链接可以用来重置帐户的密码。
