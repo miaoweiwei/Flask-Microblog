@@ -90,7 +90,6 @@
             $('.user_popup').hover(
                 function (event) {  /* fnOver参数是一个回调函数 表示鼠标移入事件 */
                     var elem = $(event.currentTarget); //使用event.currentTarget来提取事件的目标元素
-                    console.log(elem);
                     timer = setTimeout(function () { //在悬停事件的一秒钟后被调用
                         timer = null;
                         // 请求弹出窗口要显示的内容
@@ -98,6 +97,9 @@
                         // 然后从中提取文本，这就是在网址中要使用的用户名
                         // 使用 这句 elem.first().text().trim()就可以得到了
                         // 直接在JavaScript端构建URL时，我无法使用Flask中的url_for()
+                        if ("{{ current_user.is_anonymous  }}" === "True") { // 没有登录就不弹窗
+                            return;
+                        }
                         xhr = $.ajax('/user/' + elem.first().text().trim() + '/popup').done( //这里写请求完成的回调函数
                             function (data) {//请求完成的回调函数，在这里创建弹出窗口
                                 xhr = null;
@@ -110,6 +112,7 @@
                                     container: elem,
                                     content: data
                                 }).popover('show');
+                                //当通过Ajax添加新的Flask-Moment元素时，需要调用flask_moment_render_all()函数来适当地渲染这些元素。
                                 flask_moment_render_all();
                             }
                         );
@@ -124,6 +127,9 @@
                         xhr.abort();
                         xhr = null; // 释放请求的内容
                     } else { //在这里销毁弹出的窗口
+                        if ("{{ current_user.is_anonymous  }}" === "True") { // 没有登录就不弹窗也就不用销毁
+                            return;
+                        }
                         elem.popover('destroy');
                     }
                 }

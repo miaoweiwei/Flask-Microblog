@@ -276,16 +276,3 @@ msgstr "发生意外的错误"
 #: app/templates/errors/500.html:5
 msgid "The administrator has been notified. Sorry for the inconvenience!"
 msgstr "管理员已收到通知。 抱歉给你带来不便！"
-
-#~ msgid "File Not Found"
-#~ msgstr "文件未找到"
-
-#~ msgid "Toggle navigation"
-#~ msgstr "切换导航"
-
-#~ msgid "followers,"
-#~ msgstr "粉丝，"
-
-#~ msgid "following."
-#~ msgstr "关注。"
-

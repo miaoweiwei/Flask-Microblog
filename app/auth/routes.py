@@ -40,6 +40,7 @@ def login():
             return redirect(url_for('auth.login'))
         login_user(user, remember=form.remember_me.data)  # 该函数会将用户登录状态注册为已登录
         next_page = request.args.get('next')
+        print(next_page)
         if not next_page or url_parse(next_page).netloc != '':
             next_page = url_for('main.index')  # redirect()这个函数指引浏览器自动重定向到它的参数所关联的URL
         return redirect(next_page)
