@@ -7,6 +7,7 @@
 @Software: PyCharm
 @Desc    : 
 """
+from flask import request
 from flask_babel import lazy_gettext as _l
 from flask_wtf import FlaskForm
 from wtforms import StringField, TextAreaField, SubmitField
@@ -36,3 +37,14 @@ class PostForm(FlaskForm):
     """发布用户动态的表单"""
     post = TextAreaField("", validators=[DataRequired(), Length(min=1, max=140)])  # "What's new to tell everyone?"
     submit = SubmitField(_l('Release'))
+
+
+class SearchForm(FlaskForm):
+    q = StringField(_l('Search'), validators=[DataRequired()])
+
+    def __init__(self, *args, **kwargs):
+        if 'formdata' not in kwargs:
+            kwargs['formdata'] = request.args
+        if 'csrf_enabled' not in kwargs:
+            kwargs['csrf_enabled'] = False
+        super(SearchForm, self).__init__(*args, **kwargs)

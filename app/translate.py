@@ -63,6 +63,6 @@ def baidu_translate(q, source_language, dest_language):
     r = requests.get(url)
     if r.status_code != 200:
         return _('Error : the translation service failed.')
-    text = json.loads(r.content.decode('utf-8-sig'))
+    text = json.loads(r.content.decode('utf-8'))
     text = text['trans_result'][0]['dst']
     return text

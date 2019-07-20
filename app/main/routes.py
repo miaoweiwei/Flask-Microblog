@@ -19,17 +19,18 @@ from guess_language import guess_language
 
 from app import db
 from app.main import bp
-from app.main.forms import EditProfileForm, PostForm
+from app.main.forms import EditProfileForm, PostForm, SearchForm
 from app.models import User, Post
 from app.translate import baidu_translate
 
 
-@bp.before_request
+@bp.before_app_request
 def before_request():
     """简单地实现了检查current_user是否已经登录,并在已登录的情况下将last_seen字段设置为当前时间"""
     if current_user.is_authenticated:  # 当前用户是否已经登录
         current_user.last_seen = datetime.utcnow()
         db.session.commit()  # 不需要db.session.add()这句，因为当前用户已经存在数据库里了，当前用户是查询得到的
+        g.search_form = SearchForm()
     g.locale = str(get_locale())
 
 
@@ -92,10 +93,9 @@ def user(username):
     strart_page = request.args.get('page', 1, type=int)
     end_page = current_app.config['POSTS_PER_PAGE']
     posts = user.posts.order_by(Post.timestamp.desc()).paginate(strart_page, end_page, False)
-    next_url = url_for('main.user', username=user.usernmae, page=posts.next_num) if posts.has_next else None
-    prev_url = url_for('main.user', username=user.usernmae, page=posts.prev_num) if posts.has_prev else None
-    return render_template('user.html', user=user, posts=posts.items,
-                           next_url=next_url, prev_url=prev_url)
+    next_url = url_for('main.user', username=user.username, page=posts.next_num) if posts.has_next else None
+    prev_url = url_for('main.user', username=user.username, page=posts.prev_num) if posts.has_prev else None
+    return render_template('user.html', user=user, posts=posts.items, next_url=next_url, prev_url=prev_url)
 
 
 @bp.route('/edit_profile', methods=['GET', 'POST'])
@@ -158,3 +158,20 @@ def translate_text():
                                          request.form['source_language'],
                                          request.form['dest_language'])}
     return jsonify(baidu_dic)
+
+
+@bp.route('/search')
+@login_required
+def search():
+    """用于搜索的视图函数"""
+    if not g.search_form.validate():
+        return redirect(url_for('main.explore'))
+    page_start = request.args.get('page', 1, type=int)
+    page_end = current_app.config['POSTS_PER_PAGE']
+    posts, total = Post.search(g.search_form.q.data, page_start, page_end)
+    next_url = url_for('main.search', q=g.search_form.q.data, page=page_start + 1) \
+        if total > page_start * page_end else None
+    prev_url = url_for('main.search', q=g.search_form.q.data, page=page_start - 1) \
+        if page_start > 1 else None
+    return render_template('search.html', title=_('Search'), posts=posts,
+                           next_url=next_url, prev_url=prev_url)

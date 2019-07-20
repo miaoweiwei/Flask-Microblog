@@ -59,4 +59,6 @@ class Config(object):
     BAIDU_TRANSLATE_SECRET = os.environ.get("BAIDU_TRANSLATE_SECRET")
 
     # Elasticsearch 配置。用于搜索服务
-    ELASTICSEARCH_URL = os.environ.get('ELASTICSEARCH_URL')  # 如果变量未定义，我将设置其为None，并将其用作禁用Elasticsearch的信号,环境变量写在了.env文件中
+    # 如果变量未定义，我将设置其为None，并将其用作禁用Elasticsearch的信号,环境变量写在了.env文件中
+    ELASTICSEARCH_URL = os.environ.get('ELASTICSEARCH_URL') or None
+    # ELASTICSEARCH_URL = 'http://localhost:6666'

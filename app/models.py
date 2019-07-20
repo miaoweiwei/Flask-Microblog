@@ -14,6 +14,56 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
 from hashlib import md5
 from app import db, login, current_app
+from app.search import remove_from_index, add_to_index, query_index
+
+
+class SearchableMixin(object):
+    # classmethod 类方法像高级语言的静态方法
+    # classmethod类方法 修饰符对应的函数不需要实例化，不需要 self 参数，但第一个参数需要是表示自身类的 cls 参数，可以来调用类的属性，类的方法，实例化对象等。
+    @classmethod
+    def search(cls, expression, page, per_page):
+        """获取搜索结果列表"""
+        ids, total = query_index(cls.__tablename__, expression, page, per_page)
+        if total == 0:
+            return cls.query.filter_by(id=0), 0
+        when = []
+        for i in range(len(ids)):
+            when.append((ids[i], i))
+        return cls.query.filter(cls.id.in_(ids)).order_by(db.case(when, value=cls.id)), total  # SQL 的case when语句
+
+    @classmethod
+    def before_commit(cls, session):  # 在事务提交发生之前
+        session._changes = {
+            'add': list(session.new),
+            'update': list(session.dirty),
+            'delete': list(session.deleted)
+        }
+
+    @classmethod
+    def after_commit(cls, session):  # 在事务提交发生之后
+        # session对象具有before_commit()中添加的_changes变量，所以现在我可以迭代需要被添加，修改和删除的对象，并对app/search.py中的索引函数进行相应的调用。
+        for obj in session._changes['add']:
+            if isinstance(obj, SearchableMixin):
+                add_to_index(obj.__tablename__, obj)
+        for obj in session._changes['update']:
+            if isinstance(obj, SearchableMixin):
+                add_to_index(obj.__tablename__, obj)
+        for obj in session._changes['delete']:
+            if isinstance(obj, SearchableMixin):
+                remove_from_index(obj.__tablename__, obj)
+        session._changes = None
+
+    @classmethod
+    def reindex(cls):
+        # reindex()类方法是一个简单的帮助方法，你可以使用它来刷新所有数据的索引。
+        # 有了这个方法，我可以调用Post.reindex()将数据库中的所有用户动态添加到搜索索引中
+        for obj in cls.query:
+            add_to_index(cls.__tablename__, obj)
+
+
+# 监听提交之前和之后的事件,请注意，db.event.listen()调用不在类内部，而是在其后面。 这两行代码设置了每次提交之前和之后调用的事件处理程序。
+db.event.listen(db.session, 'before_commit', SearchableMixin.before_commit)
+db.event.listen(db.session, 'after_commit', SearchableMixin.after_commit)
 
 #  用户之间的关注 粉丝关系，followers表是关系的关联表
 followers = db.Table('followers',
@@ -134,9 +184,17 @@ class User(UserMixin, db.Model):
         return User.query.get(user_id)
 
 
-class Post(db.Model):
+# 插件期望应用配置一个用户加载函数，可以调用该函数来加载给定ID的用户
+# 使用Flask-Login的@login.user_loader装饰器来为用户加载功能注册函数。 Flask-Login将字符串类型的参数id传入用户加载函数，
+# 因此使用数字ID的数据库需要如上所示地将字符串转换为整数。
+@login.user_loader
+def load_user(id):
+    return User.query.get(int(id))
+
+
+class Post(SearchableMixin, db.Model):
     """用户发表的动态"""
-    __searchable__ = ['bpdy']  # 这个模型需要有body字段才能被索引,我添加的这个__searchable__属性只是一个变量，它没有任何关联的行为。 它只会帮助我以通用的方式编写索引函数。
+    __searchable__ = ['body']  # 这个模型需要有body字段才能被索引,我添加的这个__searchable__属性只是一个变量，它没有任何关联的行为。 它只会帮助我以通用的方式编写索引函数。
     id = db.Column(db.Integer, primary_key=True)
     body = db.Column(db.String(140))
     # 添加了一个default参数，并传入了datetime.utcnow函数。 当你将一个函数作为默认值传入后，
@@ -148,11 +206,3 @@ class Post(db.Model):
 
     def __repr__(self):
         return '<Post {}>'.format(self.body)
-
-
-# 插件期望应用配置一个用户加载函数，可以调用该函数来加载给定ID的用户
-# 使用Flask-Login的@login.user_loader装饰器来为用户加载功能注册函数。 Flask-Login将字符串类型的参数id传入用户加载函数，
-# 因此使用数字ID的数据库需要如上所示地将字符串转换为整数。
-@login.user_loader
-def load_user(id):
-    return User.query.get(int(id))
