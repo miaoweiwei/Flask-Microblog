@@ -11,9 +11,11 @@
         </td>
         <td>
             {% set user_link %} {# 类似定义了一个变量 #}
-            <a href="{{ url_for('main.user', username=post.author.username) }}">
-                {{ post.author.username }}
-            </a>
+                <span class="user_popup">
+                    <a href="{{ url_for('main.user', username=post.author.username) }}">
+                        {{ post.author.username }}
+                    </a>
+                </span>
             {% endset %}
             {#fromNow()显示该博客发布到现在的时间#}
             {{ _('%(username)s said %(when)s', username=user_link, when=moment(post.timestamp).fromNow()) }}

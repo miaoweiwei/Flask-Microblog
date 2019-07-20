@@ -1,18 +1,35 @@
 # Flask学习
 ## 安装所需要的包
-[数据库设计工具](https://ondras.zarovi.cz/sql/demo/)  
-在PyCharm的Terminal里执行下面的命令  
 <code> 
 
-    pip install -r install.txt  
-</code>
-导出该项目安装的包  
-<code> 
-
+    在PyCharm的Terminal里执行下面的命令 
+    
+    pip install -r install.txt    
+    
+    主要的依赖包如下：
+    
+    flask
+    python-dotenv
+    flask-wtf
+    flask-sqlalchemy
+    flask-migrate
+    flask-login
+    flask-mail
+    pyjwt
+    flask-bootstrap
+    flask-moment
+    flask-babel
+    guess-language_spirit
+    requests
+    elasticsearch
+    
+    导出该项目安装的包：  
+    
     pip freeze > requirements.txt
 </code>
 
 ## [数据库](https://github.com/luhuisicnu/The-Flask-Mega-Tutorial-zh/blob/master/docs/%E7%AC%AC%E5%9B%9B%E7%AB%A0%EF%BC%9A%E6%95%B0%E6%8D%AE%E5%BA%93.md)
+[数据库设计工具](https://ondras.zarovi.cz/sql/demo/)  
 ### 初始化
 Flask-Migrate通过flask命令暴露来它的子命令。 你已经看过flask run，这是一个Flask本身的子命令。 Flask-Migrate添加了flask db子命令来管理与数据库迁移相关的所有事情。 那么让我们通过运行flask db init来创建microblog的迁移存储库：
 

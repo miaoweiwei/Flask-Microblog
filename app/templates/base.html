@@ -13,7 +13,7 @@
             <div class="navbar-header">
                 <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
                         data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
-                    <span class="sr-only">Toggle navigation</span>
+                    <span class="sr-only">{{ _('Toggle navigation') }}</span>
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
@@ -82,5 +82,57 @@
                 $(destElem).text("{{ _('Error: Could not contact server.') }}");
             });
         }
+
+        /* $('.user_popup')获取这些元素的列表（CSS选择器中，#前缀代表查询id属性，.前缀代表查询class属性）*/
+        $(function () { /* 这个函数将在页面加载完成时运行 */
+            var timer = null;
+            var xhr = null;
+            $('.user_popup').hover(
+                function (event) {  /* fnOver参数是一个回调函数 表示鼠标移入事件 */
+                    var elem = $(event.currentTarget); //使用event.currentTarget来提取事件的目标元素
+                    console.log(elem);
+                    timer = setTimeout(function () { //在悬停事件的一秒钟后被调用
+                        timer = null;
+                        // 请求弹出窗口要显示的内容
+                        // 为了提取用户名，我可以从<span>开始浏览DOM，移至第一个子元素，即<a>元素，
+                        // 然后从中提取文本，这就是在网址中要使用的用户名
+                        // 使用 这句 elem.first().text().trim()就可以得到了
+                        // 直接在JavaScript端构建URL时，我无法使用Flask中的url_for()
+                        xhr = $.ajax('/user/' + elem.first().text().trim() + '/popup').done( //这里写请求完成的回调函数
+                            function (data) {//请求完成的回调函数，在这里创建弹出窗口
+                                xhr = null;
+                                // popover()调用创建了一个弹窗组件，该组件也具有一个名为popover()的方法来显示弹窗。
+                                // 因此我不得不添加第二个popover('show')调用来将弹窗显示到页面中。
+                                elem.popover({//创建弹窗
+                                    trigger: 'manual',
+                                    html: true,
+                                    animation: false,
+                                    container: elem,
+                                    content: data
+                                }).popover('show');
+                                flask_moment_render_all();
+                            }
+                        );
+                    }, 1000);
+                },
+                function (event) { /* fnOut参数是一个回调函数 表示鼠标移出事件 */
+                    var elem = $(event.currentTarget);
+                    if (timer) { //避免之悬停了小于1秒后移开鼠标也会显示
+                        clearTimeout(timer);
+                        timer = null;
+                    } else if (xhr) {
+                        xhr.abort();
+                        xhr = null; // 释放请求的内容
+                    } else { //在这里销毁弹出的窗口
+                        elem.popover('destroy');
+                    }
+                }
+            );
+        });
+        /*
+        浏览器在鼠标进入受影响的元素后立即调度悬停事件。 针对弹出行为，你只想鼠标停留在元素上一段时间才能激活，
+        以防当鼠标指针短暂通过元素但不停留在元素上时出现弹出闪烁。 由于该事件不支持延迟，因此这是我需要自己实现的另一件事情。
+        所以我打算在“鼠标进入”事件处理程序中添加一秒计时器：
+         */
     </script>
 {% endblock %}
