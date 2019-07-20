@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2019-07-03 01:46+0800\n"
+"POT-Creation-Date: 2019-07-18 19:15+0800\n"
 "PO-Revision-Date: 2019-06-28 19:41+0800\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: zh\n"
@@ -38,7 +38,7 @@ msgstr "密码"
 msgid "Remember Me"
 msgstr "记住密码"
 
-#: app/forms.py:26 app/routes.py:46 app/templates/login.html:5
+#: app/forms.py:26 app/routes.py:47 app/templates/login.html:5
 msgid "Sign In"
 msgstr "登录"
 
@@ -50,7 +50,7 @@ msgstr "邮箱"
 msgid "Repeat Password"
 msgstr "再一次输入密码"
 
-#: app/forms.py:35 app/routes.py:97 app/templates/register.html:8
+#: app/forms.py:35 app/routes.py:101 app/templates/register.html:8
 msgid "Register"
 msgstr "注册"
 
@@ -78,68 +78,76 @@ msgstr "发布"
 msgid "Request Password Reset"
 msgstr "请求密码重置"
 
-#: app/routes.py:39
+#: app/routes.py:40
 msgid "Invalid username or password"
 msgstr "用户名或密码无效"
 
-#: app/routes.py:64
+#: app/routes.py:68
 msgid "Your post is now live!"
 msgstr "发布成功！"
 
-#: app/routes.py:79 app/templates/base.html:25
+#: app/routes.py:83 app/templates/base.html:25
 msgid "Home"
 msgstr "主页"
 
-#: app/routes.py:95
+#: app/routes.py:99
 msgid "Congratulations, you are now a registered user!"
 msgstr "恭喜您注册成功！"
 
-#: app/routes.py:136
+#: app/routes.py:140
 msgid "Your changes have been saved."
 msgstr "你的修改已被保存。"
 
-#: app/routes.py:141 app/templates/edit_profile.html:5
+#: app/routes.py:145 app/templates/edit_profile.html:5
 msgid "Edit Profile"
 msgstr "编辑个人资料"
 
-#: app/routes.py:150 app/routes.py:167
+#: app/routes.py:154 app/routes.py:171
 #, python-format
 msgid "User %(username)s not found."
 msgstr "用户 %(username)s 不存在"
 
-#: app/routes.py:153
+#: app/routes.py:157
 msgid "You cannot follow yourself!"
 msgstr "你不能关注你自己"
 
-#: app/routes.py:157
+#: app/routes.py:161
 #, python-format
 msgid "You are following %(username)s!"
 msgstr "你已经成功关注 %(username)s!"
 
-#: app/routes.py:170
+#: app/routes.py:174
 msgid "You cannot unfollow yourself!"
 msgstr "你无法取消关注自己！"
 
-#: app/routes.py:174
+#: app/routes.py:178
 #, python-format
 msgid "You are not following %(username)s."
 msgstr "您没有关注 following %(username)s."
 
-#: app/routes.py:191 app/templates/base.html:26
+#: app/routes.py:195 app/templates/base.html:26
 msgid "Explore"
 msgstr "发现"
 
-#: app/routes.py:207
+#: app/routes.py:211
 msgid "Check your email for the instructions to reset your password"
 msgstr "查看您的电子邮件，了解重置密码的说明"
 
-#: app/routes.py:209 app/templates/reset_password_request.html:5
+#: app/routes.py:213 app/templates/reset_password_request.html:5
 msgid "Reset Password"
 msgstr "重设密码"
 
-#: app/routes.py:223
+#: app/routes.py:228
 msgid "Your password has been reset."
 msgstr "您的密码已重置。"
+
+#: app/translate.py:27 app/translate.py:48
+msgid "Error: the translation service is not  configured."
+msgstr "错误：未配置翻译服务。"
+
+#: app/translate.py:34 app/translate.py:65
+msgid "Error : the translation service failed."
+msgstr "错误：翻译服务失败。"
 
 #: app/templates/404.html:4
 msgid "File Not Found"
@@ -162,6 +170,10 @@ msgstr "管理员已收到通知。 抱歉给你带来不便！"
 msgid "%(username)s said %(when)s"
 msgstr "%(username)s 发布 %(when)s"
 
+#: app/templates/_post.html:29
+msgid "Translate"
+msgstr "翻译"
+
 #: app/templates/base.html:7
 msgid "Welcome to Microblog"
 msgstr "欢迎来到 Microblog"
@@ -181,6 +193,10 @@ msgstr "我的"
 #: app/templates/base.html:33
 msgid "Logout"
 msgstr "登出"
+
+#: app/templates/base.html:71
+msgid "Error: Could not contact server."
+msgstr "错误：无法连接服务器。"
 
 #: app/templates/index.html:7
 msgid "What's new to tell everyone?"

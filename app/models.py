@@ -13,7 +13,7 @@ from time import time
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
 from hashlib import md5
-from app import db, login, app
+from app import db, login, current_app
 
 #  用户之间的关注 粉丝关系，followers表是关系的关联表
 followers = db.Table('followers',
@@ -118,7 +118,7 @@ class User(UserMixin, db.Model):
         # jwt.encode()返回的是一个字节序列所以要用decode('utf-8')解码成字符串
         return jwt.encode(
             {'reset_password': self.id, 'exp': time() + expire_in},
-            app.config['SECRET_KEY'], algorithm='HS256').decode('utf-8')
+            current_app.config['SECRET_KEY'], algorithm='HS256').decode('utf-8')
 
     @staticmethod
     def verify_reset_password_token(token):
@@ -126,7 +126,7 @@ class User(UserMixin, db.Model):
         # 尝试通过调用PyJWT的jwt.decode()函数来解码它。
         # 如果令牌不能被验证或已过期，将会引发异常
         try:
-            secret_key = jwt.decode(token, app.config['SECRET_KEY'], algorithms=['HS256'])
+            secret_key = jwt.decode(token, current_app.config['SECRET_KEY'], algorithms=['HS256'])
             user_id = secret_key['reset_password']
             exp = secret_key['exp']
         except:
@@ -136,6 +136,7 @@ class User(UserMixin, db.Model):
 
 class Post(db.Model):
     """用户发表的动态"""
+    __searchable__ = ['bpdy']  # 这个模型需要有body字段才能被索引,我添加的这个__searchable__属性只是一个变量，它没有任何关联的行为。 它只会帮助我以通用的方式编写索引函数。
     id = db.Column(db.Integer, primary_key=True)
     body = db.Column(db.String(140))
     # 添加了一个default参数，并传入了datetime.utcnow函数。 当你将一个函数作为默认值传入后，

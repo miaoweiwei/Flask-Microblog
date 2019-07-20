@@ -9,10 +9,11 @@
 就让我们来定义用户登录表单来做一个开始吧，它会要求用户输入username和password，
 并提供一个“remember me”的复选框和提交按钮：
 """
-from flask_wtf import FlaskForm
 from flask_babel import lazy_gettext as _l
-from wtforms import StringField, TextAreaField, PasswordField, BooleanField, SubmitField
-from wtforms.validators import DataRequired, ValidationError, Email, EqualTo, Length
+from flask_wtf import FlaskForm
+from wtforms import StringField, PasswordField, BooleanField, SubmitField
+from wtforms.validators import DataRequired, ValidationError, Email, EqualTo
+
 from app.models import User
 
 
@@ -49,29 +50,6 @@ class RegistrationForm(FlaskForm):
         user = User.query.filter_by(email=email.data).first()
         if user is not None:
             raise ValidationError(_l('Please use a different email address.'))
-
-
-class EditProfileForm(FlaskForm):
-    username = StringField(_l('Username'), validators=[DataRequired()])
-    about_me = TextAreaField(_l('About me'), validators=[Length(min=0, max=140)])
-    submit = SubmitField(_l('Submit'))
-
-    def __init__(self, original_username, *args, **kwargs):
-        super(EditProfileForm, self).__init__(*args, **kwargs)
-        self.original_username = original_username
-
-    def validate_username(self, username):
-        """验证用户名是否已经存在"""
-        if username.data != self.original_username:
-            user = User.query.filter_by(username=self.username.data).first()
-            if user is not None:
-                raise ValidationError(_l('Please use a different username.'))
-
-
-class PostForm(FlaskForm):
-    """发布用户动态的表单"""
-    post = TextAreaField("", validators=[DataRequired(), Length(min=1, max=140)])  # "What's new to tell everyone?"
-    submit = SubmitField(_l('Release'))
 
 
 class ResetPasswordRequestForm(FlaskForm):

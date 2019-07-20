@@ -2,7 +2,7 @@
 <table class="table table-hover">
     <tr> {# <tr>是一行</tr> #}
         <td width="50px">
-            <a href="{{ url_for('user', username=post.author.username) }}">
+            <a href="{{ url_for('main.user', username=post.author.username) }}">
                 {# 设置图标为圆形 #}
                 <div style="width: 50px;height: 50px; border-radius:50%;overflow: hidden;">
                     <img src="{{ post.author.avatar(50) }}"/>
@@ -11,7 +11,7 @@
         </td>
         <td>
             {% set user_link %} {# 类似定义了一个变量 #}
-            <a href="{{ url_for('user',username=post.author.username) }}">
+            <a href="{{ url_for('main.user', username=post.author.username) }}">
                 {{ post.author.username }}
             </a>
             {% endset %}
@@ -21,13 +21,13 @@
             <span id="post{{ post.id }}">{{ post.body }}</span>
             {% if post.language and post.language != g.locale %}
                 <br><br>
-                <span id="translate{{ post.id }}">
-                <a href="javascript:translate(
-                '#post{{ post.id }}',
-                '#translation{{ post.id }}',
-                '{{ post.language }}',
-                '{{ g.locale }}');">{{ _('Translate') }}</a>
-            </span>
+                <span id="translation{{ post.id }}">
+                    <a href="javascript:translate(
+                                '#post{{ post.id }}',
+                                '#translation{{ post.id }}',
+                                '{{ post.language }}',
+                                '{{ g.locale }}');">{{ _('Translate') }}</a>
+                </span>
             {% endif %}
         </td>
     </tr>

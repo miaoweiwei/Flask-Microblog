@@ -8,8 +8,14 @@
 @Desc    : 
 """
 import os
+from dotenv import load_dotenv
 
 basedir = os.path.abspath(os.path.dirname(__file__))  # 该应用程序的根目录
+# 创建一个 .env 文件并在其中写入应用所需的所有环境变量了
+# 不要将 .env 文件加入到源代码版本控制中，这非常重要。否则，一旦你的密码和其他重要信息上传到远程代码库中后，你就会后悔莫及.
+# .env文件可以用于所有配置变量，但是不能用于Flask命令行的FLASK_APP和FLASK_DEBUG环境变量，
+# 因为它们在应用启动的早期（应用实例和配置对象存在之前）就被使用了。
+load_dotenv(os.path.join(basedir, '.env'))  # 不能存放对Flask设置的配置
 
 
 class Config(object):
@@ -38,14 +44,19 @@ class Config(object):
     MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')  # 账号和密码最好放在环境变量中，放在这里容易泄露密码 该密码要到qq邮箱的设置中开启 POP3/SMTP 和 IMAP/SMTP
     FLASK_MAIL_SENDER = '1353263604@qq.com'
 
+    SEND_MAIL = False
+
     # 表示主页每页展示的数据列表长度
     POSTS_PER_PAGE = 25
 
     # 跟踪支持的语言列表
     LANGUAGES = ['zh', 'en', 'es']  # 中文，英文，西班牙文
 
-    MS_TRANSLATE_KEY = os.environ.get("MS_TRANSLATE_KEY")  # 获取翻译api的key
+    MS_TRANSLATE_KEY = os.environ.get("MS_TRANSLATE_KEY")  # 获取微软翻译api的key ，搞半天没有申请下来，还是用百度的吧
 
-    # Elasticsearch 配置。
-    # ELASTICSEARCH_URL = os.environ.get('ELASTICSEARCH_URL')  # 如果变量未定义，我将设置其为None，并将其用作禁用Elasticsearch的信号
-    ELASTICSEARCH_URL = 'http: // localhost: 5000'
+    # 百度翻译的 appid和秘钥
+    BAIDU_TRANSLATE_APPID = os.environ.get("BAIDU_TRANSLATE_APPID")
+    BAIDU_TRANSLATE_SECRET = os.environ.get("BAIDU_TRANSLATE_SECRET")
+
+    # Elasticsearch 配置。用于搜索服务
+    ELASTICSEARCH_URL = os.environ.get('ELASTICSEARCH_URL')  # 如果变量未定义，我将设置其为None，并将其用作禁用Elasticsearch的信号,环境变量写在了.env文件中

@@ -9,18 +9,28 @@
 """
 from datetime import datetime, timedelta
 import unittest
-from app import app, db
+from app import create_app, db
 from app.models import User, Post
+
+from config import Config
+
+
+class TestConfig(Config):
+    TESTING = True
+    SQLALCHEMY_DATABASE_URI = 'sqlite://'
 
 
 class UserModelCase(unittest.TestCase):
     def setUp(self) -> None:  # 在测试之前执行
-        app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite://'
+        self.app = create_app(TestConfig)
+        self.app_context = self.app.app_context()
+        self.app_context.push()
         db.create_all()  # 创建所有的数据库表
 
     def tearDown(self) -> None:  # 在测试之后执行
         db.session.remove()
         db.drop_all()
+        self.app_context.pop()
 
     def test_password_hashing(self):
         u = User(username='susan')
