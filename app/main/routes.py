@@ -11,17 +11,16 @@
 # @bp.before_request注册在视图函数之前执行的函数因为现在我可以在一处地方编写代码，
 # 并让它在任何视图函数之前被执行
 from datetime import datetime
-
-from flask import render_template, flash, redirect, url_for, request, g, jsonify, current_app
-from flask_babel import _, get_locale
+from flask import render_template, flash, redirect, url_for, request, g, \
+    jsonify, current_app
 from flask_login import current_user, login_required
+from flask_babel import _, get_locale
 from guess_language import guess_language
-
 from app import db
-from app.main import bp
 from app.main.forms import EditProfileForm, PostForm, SearchForm, MessageForm
 from app.models import User, Post, Message, Notification
-from app.translate import baidu_translate
+from app.translate import ms_translate, baidu_translate
+from app.main import bp
 
 
 @bp.before_app_request
@@ -166,13 +165,13 @@ def search():
     """用于搜索的视图函数"""
     if not g.search_form.validate():
         return redirect(url_for('main.explore'))
-    page_start = request.args.get('page', 1, type=int)
-    page_end = current_app.config['POSTS_PER_PAGE']
-    posts, total = Post.search(g.search_form.q.data, page_start, page_end)
-    next_url = url_for('main.search', q=g.search_form.q.data, page=page_start + 1) \
-        if total > page_start * page_end else None
-    prev_url = url_for('main.search', q=g.search_form.q.data, page=page_start - 1) \
-        if page_start > 1 else None
+    page = request.args.get('page', 1, type=int)
+    posts, total = Post.search(g.search_form.q.data, page,
+                               current_app.config['POSTS_PER_PAGE'])
+    next_url = url_for('main.search', q=g.search_form.q.data, page=page + 1) \
+        if total > page * current_app.config['POSTS_PER_PAGE'] else None
+    prev_url = url_for('main.search', q=g.search_form.q.data, page=page - 1) \
+        if page > 1 else None
     return render_template('search.html', title=_('Search'), posts=posts,
                            next_url=next_url, prev_url=prev_url)
 

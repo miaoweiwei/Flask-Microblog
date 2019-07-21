@@ -22,6 +22,7 @@
     guess-language_spirit
     requests
     elasticsearch
+    rq
     
     导出该项目安装的包：  
     
@@ -272,3 +273,23 @@ cli要引入到其他的文件，可以另外新建一个run.py文件，把app,c
     flask translate update # 用于更新所有语言存储库
     flask translate compile # 用于编译所有语言存储库
 </code>
+
+# 搜索
+想要使用搜索功能需要安装 elasticsearch，这个是一个软件不是python包
+[elasticsearch下载](https://www.elastic.co/cn/downloads/elasticsearch)  
+
+注意不同版本的elasticsearch服务可能在搜索时可能返回不同的结果（返回的json格式不一样）
+<code>
+
+    # 注意Python包elasticsearch的版本在低于7.X时候下面的这句可以运行
+    
+    es.search(index='my_index', doc_type='my_index',body={'query': {'match': {'text': 'this test'}}})
+    
+    # 在高于7.0时候使用下面这句
+    
+    es.search(index='my_index',body={'query': {'match': {'text': 'this test'}}})
+</code>
+
+# 后台作业
+这个功能需要安装  Redis Queue(RQ) 软件，这是一个消息队列的服务
+[Redis Queue(RQ)](http://python-rq.org/)

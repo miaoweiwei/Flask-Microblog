@@ -7,16 +7,16 @@
 @Software: PyCharm
 @Desc    : 数据库模型
 """
-import jwt
 import json
-
 from datetime import datetime
-from time import time
-from werkzeug.security import generate_password_hash, check_password_hash
-from flask_login import UserMixin
 from hashlib import md5
-from app import db, login, current_app
-from app.search import remove_from_index, add_to_index, query_index
+from time import time
+from flask import current_app
+from flask_login import UserMixin
+from werkzeug.security import generate_password_hash, check_password_hash
+import jwt
+from app import db, login
+from app.search import add_to_index, remove_from_index, query_index
 
 
 class SearchableMixin(object):
@@ -70,7 +70,8 @@ db.event.listen(db.session, 'after_commit', SearchableMixin.after_commit)
 #  用户之间的关注 粉丝关系，followers表是关系的关联表
 followers = db.Table('followers',
                      db.Column('follower_id', db.Integer, db.ForeignKey('user.id')),  # 关注者
-                     db.Column('followed_id', db.Integer, db.ForeignKey('user.id')))  # 被关注者
+                     db.Column('followed_id', db.Integer, db.ForeignKey('user.id'))  # 被关注者
+                     )
 
 
 # 创建的User类继承自db.Model 实际上是一个表，它是Flask-SQLAlchemy中所有模型的基类这个类将表的字段定义为类属性，
@@ -99,8 +100,7 @@ class User(UserMixin, db.Model):
     # 这将会为用户动态添加一个属性post.author，调用它将返回给该用户动态的用户实例。 lazy参数定义了这种关系调用的数据库查询是如何执行的，
 
     followed = db.relationship(
-        'User',
-        secondary=followers,
+        'User', secondary=followers,
         primaryjoin=(followers.c.follower_id == id),
         secondaryjoin=(followers.c.followed_id == id),
         backref=db.backref('followers', lazy='dynamic'), lazy='dynamic')
