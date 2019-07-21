@@ -38,7 +38,19 @@
                     {% if current_user.is_anonymous %}
                         <li><a href="{{ url_for('auth.login') }}">{{ _('Login') }}</a></li>
                     {% else %}
-                        <li><a href="{{ url_for('main.user', username=current_user.username) }}">{{ _('Profile') }}</a>
+                        <li>
+                            <a href="{{ url_for('main.messages') }}">
+                                {{ _('Messages') }}
+                                {% set new_messages = current_user.new_messages() %}{# 显示未读信息的个数 #}
+                                <span id="message_count" class="badge"
+                                      style="visibility: {% if new_messages %}visible
+                                      {% else %}hidden {% endif %};">
+                                {{ new_messages }}
+                                </span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ url_for('main.user', username=current_user.username) }}">{{ _('Profile') }}</a>
                         </li>
                         <li><a href="{{ url_for('auth.logout') }}">{{ _('Logout') }}</a></li>
                     {% endif %}
@@ -83,6 +95,11 @@
             });
         }
 
+        /*
+       浏览器在鼠标进入受影响的元素后立即调度悬停事件。 针对弹出行为，你只想鼠标停留在元素上一段时间才能激活，
+       以防当鼠标指针短暂通过元素但不停留在元素上时出现弹出闪烁。 由于该事件不支持延迟，因此这是我需要自己实现的另一件事情。
+       所以我打算在“鼠标进入”事件处理程序中添加一秒计时器：
+        */
         /* $('.user_popup')获取这些元素的列表（CSS选择器中，#前缀代表查询id属性，.前缀代表查询class属性）*/
         $(function () { /* 这个函数将在页面加载完成时运行 */
             var timer = null;
@@ -135,10 +152,33 @@
                 }
             );
         });
-        /*
-        浏览器在鼠标进入受影响的元素后立即调度悬停事件。 针对弹出行为，你只想鼠标停留在元素上一段时间才能激活，
-        以防当鼠标指针短暂通过元素但不停留在元素上时出现弹出闪烁。 由于该事件不支持延迟，因此这是我需要自己实现的另一件事情。
-        所以我打算在“鼠标进入”事件处理程序中添加一秒计时器：
-         */
+
+        //当new_messages非零时，visibility CSS属性设置为visible；否则设置为hidden
+        //这个新的set_message_count()函数将设置徽章元素中的消息数量，并调整可见性，以便在计数为0时隐藏徽章。
+        function set_message_count(n) {
+            $('#message_count').text(n);
+            $('#message_count').css('visiblity', n ? 'visible' : 'hidden');
+        }
+
+        // 轮询通知 刷新未读信息的个数
+        {% if current_user.is_authenticated %} //用户登录了才会刷新
+            $(function () {
+                // since参数动态更新多次。 第一次，这个请求将被发送到 /notifications?since=0 ，但是一旦我收到通知，我就会将since更新为它的时间戳。
+                // 这可以确保我不会收到重复的内容，因为我总是要求收到自我上次看到的通知以来发生的新通知。
+                // 同样重要的是要注意，我在interval函数外声明since变量，因为我不希望它是局部变量，我想要在所有调用中使用相同的变量。
+                var since = 0;
+                setInterval(function () { //设置定时器
+                    $.ajax('{{ url_for('main.notifications') }}?since=' + since).done(
+                        function (notifications) {
+                            for (var i = 0; i < notifications.length; i++) {
+                                if (notifications[i].name == 'unread_message_count')
+                                    set_message_count(notifications[i].data);
+                                since = notifications[i].timestamp;
+                            }
+                        }
+                    );
+                }, 10000); // 10秒钟刷新一次未读信息的个数
+            });
+        {% endif %}
     </script>
 {% endblock %}

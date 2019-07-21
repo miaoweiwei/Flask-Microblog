@@ -14,7 +14,7 @@ http://localhost:5000
 http://localhost:5000/index
 """
 from app import create_app, db, cli
-from app.models import User, Post
+from app.models import User, Post, Notification, Message
 
 app = create_app()  # 调用工程函数
 cli.register(app)  # 注册语言翻译的快捷命令
@@ -28,7 +28,7 @@ cli.register(app)  # 注册语言翻译的快捷命令
 
 @app.shell_context_processor
 def make_shell_context():
-    return {'db': db, 'User': User, 'Post': Post}
+    return {'db': db, 'User': User, 'Post': Post, 'Notification': Notification, 'Message': Message}
 
 
 print("run.py服务启动了")

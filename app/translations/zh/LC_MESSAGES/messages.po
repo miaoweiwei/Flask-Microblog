@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2019-07-20 21:43+0800\n"
+"POT-Creation-Date: 2019-07-21 14:32+0800\n"
 "PO-Revision-Date: 2019-06-28 19:41+0800\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: zh\n"
@@ -46,7 +46,7 @@ msgstr "密码"
 msgid "Remember Me"
 msgstr "记住密码"
 
-#: app/auth/forms.py:27 app/auth/routes.py:46 app/templates/auth/login.html:5
+#: app/auth/forms.py:27 app/auth/routes.py:47 app/templates/auth/login.html:5
 msgid "Sign In"
 msgstr "登录"
 
@@ -58,7 +58,7 @@ msgstr "邮箱"
 msgid "Repeat Password"
 msgstr "再一次输入密码"
 
-#: app/auth/forms.py:36 app/auth/routes.py:67
+#: app/auth/forms.py:36 app/auth/routes.py:68
 #: app/templates/auth/register.html:8
 msgid "Register"
 msgstr "注册"
@@ -79,19 +79,19 @@ msgstr "请求密码重置"
 msgid "Invalid username or password"
 msgstr "用户名或密码无效"
 
-#: app/auth/routes.py:65
+#: app/auth/routes.py:66
 msgid "Congratulations, you are now a registered user!"
 msgstr "恭喜您注册成功！"
 
-#: app/auth/routes.py:80
+#: app/auth/routes.py:81
 msgid "Check your email for the instructions to reset your password"
 msgstr "查看您的电子邮件，了解重置密码的说明"
 
-#: app/auth/routes.py:82 app/templates/auth/reset_password_request.html:5
+#: app/auth/routes.py:83 app/templates/auth/reset_password_request.html:5
 msgid "Reset Password"
 msgstr "重设密码"
 
-#: app/auth/routes.py:97
+#: app/auth/routes.py:98
 msgid "Your password has been reset."
 msgstr "您的密码已重置。"
 
@@ -99,7 +99,7 @@ msgstr "您的密码已重置。"
 msgid "About me"
 msgstr "关于我"
 
-#: app/main/forms.py:22
+#: app/main/forms.py:22 app/main/forms.py:55
 msgid "Submit"
 msgstr "提交"
 
@@ -109,7 +109,11 @@ msgstr "发布"
 
 #: app/main/forms.py:43 app/main/routes.py:176
 msgid "Search"
-msgstr ""
+msgstr "搜索"
+
+#: app/main/forms.py:54
+msgid "Message"
+msgstr "信息"
 
 #: app/main/routes.py:49
 msgid "Your post is now live!"
@@ -154,6 +158,14 @@ msgstr "你无法取消关注自己！"
 msgid "You are not following %(username)s."
 msgstr "您没有关注 following %(username)s."
 
+#: app/main/routes.py:196
+msgid "Your message has been sent."
+msgstr "您的留言发送成功"
+
+#: app/main/routes.py:198
+msgid "Send Message"
+msgstr "发送信息"
+
 #: app/templates/_post.html:21
 #, python-format
 msgid "%(username)s said %(when)s"
@@ -175,15 +187,19 @@ msgstr "切换导航"
 msgid "Login"
 msgstr "登录"
 
-#: app/templates/base.html:41
+#: app/templates/base.html:43 app/templates/messages.html:4
+msgid "Messages"
+msgstr "消息"
+
+#: app/templates/base.html:47
 msgid "Profile"
 msgstr "我的"
 
-#: app/templates/base.html:43
+#: app/templates/base.html:49
 msgid "Logout"
 msgstr "登出"
 
-#: app/templates/base.html:82
+#: app/templates/base.html:88
 msgid "Error: Could not contact server."
 msgstr "错误：无法连接服务器。"
 
@@ -191,13 +207,21 @@ msgstr "错误：无法连接服务器。"
 msgid "What's new to tell everyone?"
 msgstr "有什么新鲜事想告诉大家?"
 
-#: app/templates/index.html:19 app/templates/user.html:31
+#: app/templates/index.html:19 app/templates/user.html:36
 msgid "Newer posts"
 msgstr "上一页"
 
-#: app/templates/index.html:24 app/templates/user.html:36
+#: app/templates/index.html:24 app/templates/user.html:41
 msgid "Older posts"
 msgstr "下一页"
+
+#: app/templates/messages.html:12
+msgid "Newer messages"
+msgstr "新的消息"
+
+#: app/templates/messages.html:17
+msgid "Older messages"
+msgstr "旧的消息"
 
 #: app/templates/search.html:4
 msgid "Search Results"
@@ -210,6 +234,11 @@ msgstr "上一页"
 #: app/templates/search.html:17
 msgid "Next results"
 msgstr "下一页"
+
+#: app/templates/send_message.html:5
+#, python-format
+msgid "Send Message to %(recipient)s"
+msgstr "给%(recipient)s发送信息"
 
 #: app/templates/user.html:8
 msgid "User"
@@ -240,6 +269,10 @@ msgstr "关注"
 #: app/templates/user.html:19 app/templates/user_popup.html:25
 msgid "Unfollow"
 msgstr "取消关注"
+
+#: app/templates/user.html:23
+msgid "Send private message"
+msgstr "发送私信"
 
 #: app/templates/auth/login.html:12
 msgid "New User?"
@@ -276,3 +309,4 @@ msgstr "发生意外的错误"
 #: app/templates/errors/500.html:5
 msgid "The administrator has been notified. Sorry for the inconvenience!"
 msgstr "管理员已收到通知。 抱歉给你带来不便！"
+

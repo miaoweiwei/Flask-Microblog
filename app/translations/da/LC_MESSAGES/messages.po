@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2019-07-20 21:43+0800\n"
+"POT-Creation-Date: 2019-07-21 14:32+0800\n"
 "PO-Revision-Date: 2019-07-03 00:59+0800\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: da\n"
@@ -46,7 +46,7 @@ msgstr ""
 msgid "Remember Me"
 msgstr ""
 
-#: app/auth/forms.py:27 app/auth/routes.py:46 app/templates/auth/login.html:5
+#: app/auth/forms.py:27 app/auth/routes.py:47 app/templates/auth/login.html:5
 msgid "Sign In"
 msgstr ""
 
@@ -58,7 +58,7 @@ msgstr ""
 msgid "Repeat Password"
 msgstr ""
 
-#: app/auth/forms.py:36 app/auth/routes.py:67
+#: app/auth/forms.py:36 app/auth/routes.py:68
 #: app/templates/auth/register.html:8
 msgid "Register"
 msgstr ""
@@ -79,19 +79,19 @@ msgstr ""
 msgid "Invalid username or password"
 msgstr ""
 
-#: app/auth/routes.py:65
+#: app/auth/routes.py:66
 msgid "Congratulations, you are now a registered user!"
 msgstr ""
 
-#: app/auth/routes.py:80
+#: app/auth/routes.py:81
 msgid "Check your email for the instructions to reset your password"
 msgstr ""
 
-#: app/auth/routes.py:82 app/templates/auth/reset_password_request.html:5
+#: app/auth/routes.py:83 app/templates/auth/reset_password_request.html:5
 msgid "Reset Password"
 msgstr ""
 
-#: app/auth/routes.py:97
+#: app/auth/routes.py:98
 msgid "Your password has been reset."
 msgstr ""
 
@@ -99,7 +99,7 @@ msgstr ""
 msgid "About me"
 msgstr ""
 
-#: app/main/forms.py:22
+#: app/main/forms.py:22 app/main/forms.py:55
 msgid "Submit"
 msgstr ""
 
@@ -109,6 +109,10 @@ msgstr ""
 
 #: app/main/forms.py:43 app/main/routes.py:176
 msgid "Search"
+msgstr ""
+
+#: app/main/forms.py:54
+msgid "Message"
 msgstr ""
 
 #: app/main/routes.py:49
@@ -154,6 +158,14 @@ msgstr ""
 msgid "You are not following %(username)s."
 msgstr ""
 
+#: app/main/routes.py:196
+msgid "Your message has been sent."
+msgstr ""
+
+#: app/main/routes.py:198
+msgid "Send Message"
+msgstr ""
+
 #: app/templates/_post.html:21
 #, python-format
 msgid "%(username)s said %(when)s"
@@ -175,15 +187,19 @@ msgstr ""
 msgid "Login"
 msgstr ""
 
-#: app/templates/base.html:41
+#: app/templates/base.html:43 app/templates/messages.html:4
+msgid "Messages"
+msgstr ""
+
+#: app/templates/base.html:47
 msgid "Profile"
 msgstr ""
 
-#: app/templates/base.html:43
+#: app/templates/base.html:49
 msgid "Logout"
 msgstr ""
 
-#: app/templates/base.html:82
+#: app/templates/base.html:88
 msgid "Error: Could not contact server."
 msgstr ""
 
@@ -191,12 +207,20 @@ msgstr ""
 msgid "What's new to tell everyone?"
 msgstr ""
 
-#: app/templates/index.html:19 app/templates/user.html:31
+#: app/templates/index.html:19 app/templates/user.html:36
 msgid "Newer posts"
 msgstr ""
 
-#: app/templates/index.html:24 app/templates/user.html:36
+#: app/templates/index.html:24 app/templates/user.html:41
 msgid "Older posts"
+msgstr ""
+
+#: app/templates/messages.html:12
+msgid "Newer messages"
+msgstr ""
+
+#: app/templates/messages.html:17
+msgid "Older messages"
 msgstr ""
 
 #: app/templates/search.html:4
@@ -209,6 +233,11 @@ msgstr ""
 
 #: app/templates/search.html:17
 msgid "Next results"
+msgstr ""
+
+#: app/templates/send_message.html:5
+#, python-format
+msgid "Send Message to %(recipient)s"
 msgstr ""
 
 #: app/templates/user.html:8
@@ -239,6 +268,10 @@ msgstr ""
 
 #: app/templates/user.html:19 app/templates/user_popup.html:25
 msgid "Unfollow"
+msgstr ""
+
+#: app/templates/user.html:23
+msgid "Send private message"
 msgstr ""
 
 #: app/templates/auth/login.html:12

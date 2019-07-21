@@ -8,6 +8,8 @@
 @Desc    : 数据库模型
 """
 import jwt
+import json
+
 from datetime import datetime
 from time import time
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -82,25 +84,41 @@ class User(UserMixin, db.Model):
     about_me = db.Column(db.String(140))
     last_seen = db.Column(db.DateTime, default=datetime.utcnow)  # 注意datetime.utcnow不要写成datetime.utcnow()
     posts = db.relationship('Post', backref='author', lazy='dynamic')
-    followed = db.relationship(
-        'User', secondary=followers,
-        primaryjoin=(followers.c.follower_id == id),
-        secondaryjoin=(followers.c.followed_id == id),
-        backref=db.backref('followers', lazy='dynamic'), lazy='dynamic')
-
     # 第一个参数表示右侧实体
     # secondary 指定了用于该关系的关联表，就是使用我在上面定义的followers。
     # primaryjoin 指明了通过关系表关联到左侧实体（关注者）的条件 。关系中的左侧的join条件是关系表中的follower_
     # id字段与这个关注者的用户ID匹配。followers.c.follower_id表达式引用了该关系表中的follower_id列。
 
     # backref定义了右侧实体如何访问该关系，在左侧，关系被命名为followed，所以在右侧我将使用followers来表示所有左侧用户的列表，即粉丝列表
-    # 附加的lazy参数表示这个查询的执行模式，设置为动态模式的查询不会立即执行，直到被调用
+    # 附加的lazy参数表示这个查询的执行模式，设置为动态模式(懒加载)的查询不会立即执行，直到被调用
 
     # 用db.relationship初始化。这不是实际的数据库字段，而是用户和其动态之间关系的高级视图，因此它不在数据库图表中,
     # 对于一对多关系，db.relationship字段通常在“一”的这边定义，并用作访问“多”的便捷方式。因此，如果我有一个用户实例u，
     # 表达式u.posts将运行一个数据库查询，返回该用户发表过的所有动态
     # db.relationship的第一个参数表示代表关系“多”的类。 backref参数定义了代表“多”的类的实例反向调用“一”的时候的属性名称。
     # 这将会为用户动态添加一个属性post.author，调用它将返回给该用户动态的用户实例。 lazy参数定义了这种关系调用的数据库查询是如何执行的，
+
+    followed = db.relationship(
+        'User',
+        secondary=followers,
+        primaryjoin=(followers.c.follower_id == id),
+        secondaryjoin=(followers.c.followed_id == id),
+        backref=db.backref('followers', lazy='dynamic'), lazy='dynamic')
+    # Message一侧将添加author和recipient回调引用。 我之所以使用author回调而不是更适合的sender，
+    # 是因为通过使用author，我可以使用我用于用户动态的相同逻辑渲染这些消息
+    messages_sent = db.relationship('Message',
+                                    foreign_keys='Message.sender_id',
+                                    backref='author',
+                                    lazy='dynamic')
+    messages_received = db.relationship('Message',
+                                        foreign_keys='Message.recipient_id',
+                                        backref='recipient',
+                                        lazy='dynamic')
+    # last_message_read_time字段将存储用户最后一次访问消息页面的时间，并将用于确定是否有比此字段更新时间戳的未读消息
+    last_message_read_time = db.Column(db.DateTime)
+    # 通知将会有一个名称，一个关联的用户，一个Unix时间戳和一个有效载荷。
+    notifications = db.relationship('Notification', backref='user',
+                                    lazy='dynamic')
 
     # __repr__方法用于在调试时打印用户实例,在下面的Python交互式会话中你可以看到__repr__()方法的运行情况：
     #
@@ -183,6 +201,22 @@ class User(UserMixin, db.Model):
             return
         return User.query.get(user_id)
 
+    def new_messages(self):
+        """该方法实际上使用这个字段来返回用户有多少条未读消息。"""
+        last_read_time = self.last_message_read_time or datetime(1900, 1, 1)
+        return Message.query.filter_by(recipient=self).filter(
+            Message.timestamp > last_read_time).count()
+
+    # 此方法不仅为用户添加通知给数据库，还确保如果具有相同名称的通知已存在，则会首先删除该通知
+    # 我将要使用的通知将被称为 unread_message_count。 如果数据库已经有一个带有这个名称的通知，
+    # 例如值为3，则当用户收到新消息并且消息计数变为4时，我就会替换旧的通知。
+    # # 这里的 name 不是人的名字，是指消息个数的代称
+    def add_notification(self, name, data):
+        self.notifications.filter_by(name=name).delete()
+        n = Notification(name=name, payload_json=json.dumps(data), user=self)
+        db.session.add(n)
+        return n
+
 
 # 插件期望应用配置一个用户加载函数，可以调用该函数来加载给定ID的用户
 # 使用Flask-Login的@login.user_loader装饰器来为用户加载功能注册函数。 Flask-Login将字符串类型的参数id传入用户加载函数，
@@ -206,3 +240,26 @@ class Post(SearchableMixin, db.Model):
 
     def __repr__(self):
         return '<Post {}>'.format(self.body)
+
+
+class Message(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    sender_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    recipient_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    body = db.Column(db.String(140))
+    # 用于指示用户最后一次阅读他们的私有消息的时间
+    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)  # 这里的utcnow不加括号
+
+    def __repr__(self):
+        return '<Message {}>'.format(self.body)
+
+
+class Notification(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(128), index=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    timestamp = db.Column(db.Float, index=True, default=time)
+    payload_json = db.Column(db.Text)
+
+    def get_data(self):
+        return json.loads(str(self.payload_json))
