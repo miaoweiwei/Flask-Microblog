@@ -307,3 +307,5 @@ Windows服务器上只要把 export 换成 set 就行了
 
 对flask服务的设置要写在 .flaskenv 文件里，
 其他配置项写在 .env 里
+
+如果 mysql elasticsearch rq 等服务不在一台主机上注意连接时要先设置防火墙确保可以远程访问
