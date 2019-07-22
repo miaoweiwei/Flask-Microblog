@@ -23,6 +23,7 @@
     requests
     elasticsearch
     rq
+    pymysql
     
     导出该项目安装的包：  
     
@@ -293,3 +294,13 @@ cli要引入到其他的文件，可以另外新建一个run.py文件，把app,c
 # 后台作业
 这个功能需要安装  Redis Queue(RQ) 软件，这是一个消息队列的服务
 [Redis Queue(RQ)](http://python-rq.org/)
+
+# 启动web服务
+linux服务器上启动：  
+
+设置启动文件  
+export FLASK_APP=microblog.py   
+启动服务  
+flask run --host 0.0.0.0 --port 8888
+
+Windows服务器上只要把 export 换成 set 就行了

@@ -8,6 +8,7 @@
 @Desc    : 
 """
 import os
+import uuid
 from dotenv import load_dotenv
 
 basedir = os.path.abspath(os.path.dirname(__file__))  # 该应用程序的根目录
@@ -20,6 +21,7 @@ load_dotenv(os.path.join(basedir, '.env'))  # 不能存放对Flask设置的配�
 
 class Config(object):
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'you-will-never-guess'  # Post请求不能少
+    # SECRET_KEY = uuid.uuid4().hex  # 可以使用UUID生成随机的字符串
     # Flask-SQLAlchemy插件从SQLALCHEMY_DATABASE_URI配置变量中获取应用的数据库的位置
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or 'sqlite:///' + os.path.join(basedir, 'app.db')
     # SQLALCHEMY_TRACK_MODIFICATIONS配置项用于设置数据发生变更之后是否发送信号给应用，我不需要这项功能，因此将其设置为False。
