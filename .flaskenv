@@ -1,0 +1,2 @@
+FLASK_DEBUG = 0
+FLASK_APP = run.py

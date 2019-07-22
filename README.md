@@ -304,3 +304,6 @@ export FLASK_APP=microblog.py
 flask run --host 0.0.0.0 --port 8888
 
 Windows服务器上只要把 export 换成 set 就行了
+
+对flask服务的设置要写在 .flaskenv 文件里，
+其他配置项写在 .env 里
