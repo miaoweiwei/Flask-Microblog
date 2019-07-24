@@ -1,4 +1,10 @@
 # Flask学习
+
+[Flask教程](luhuisicnu/The-Flask-Mega-Tutorial-zh)  
+[教程中的代码](https://github.com/miguelgrinberg/microblog)  
+
+该仓库下面的代码是本人自己根据教程写的，若与教程中的代码有所不同，请参考原教程中的代码
+
 ## 安装所需要的包
 <code> 
 
