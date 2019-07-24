@@ -283,6 +283,10 @@ cli要引入到其他的文件，可以另外新建一个run.py文件，把app,c
     flask translate compile # 用于编译所有语言存储库
 </code>
 
+# 在线翻译
+我是用的是百度的api，原来打算是用微软的翻译api，结果搞了半天都没有申请下来，就转而是用了[百度的翻译api](http://api.fanyi.baidu.com/api/trans/product/index)
+
+
 # 搜索
 想要使用搜索功能需要安装 elasticsearch，这个是一个软件不是python包
 [elasticsearch下载](https://www.elastic.co/cn/downloads/elasticsearch)  
