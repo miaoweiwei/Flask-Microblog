@@ -50,14 +50,14 @@ def index():
     # User类的followed_posts方法返回一个SQLAlchemy查询对象，该对象被配置为从数据库中获取用户感兴趣的用户动态。
     # 在这个查询中调用all()会触发它的执行，返回值是包含所有结果的列表
     start_page = request.args.get('page', 1, type=int)  # 获取动态页要显示动态的起始页
-    end_page = current_app.config['POSTS_PER_PAGE']  # 获取动态页要显示动态的终止页
+    posts_per_page = current_app.config['POSTS_PER_PAGE']  # 获取动态页要显示动态的终止页
     # posts = current_user.followed_posts().all()  # 获取当前用户的主页应该显示的所有动态
 
     # paginate()获取指定起始和终止页的动态，
     # 错误处理布尔标记，如果是True，当请求范围超出已知范围时自动引发404错误。如果是False，则会返回一个空列表。
     # 返回一个Pagination的实例 用于分页
     # 其items属性是请求内容的数据列表。Pagination实例还有一些其他用途
-    posts = current_user.followed_posts().paginate(start_page, end_page, False)
+    posts = current_user.followed_posts().paginate(start_page, posts_per_page, False)
     next_url = url_for('main.index', page=posts.next_num) if posts.has_next else None
     prev_url = url_for('main.index', page=posts.prev_num) if posts.has_prev else None
     # 上一条语句的url_for里要加上main，因为它返回的是指向视图的路径，下面的不用加main，因为index.html不在main文件夹里
@@ -71,8 +71,8 @@ def explore():
        主页和发现页是同一个页面，只不过做了不同的处理
     """
     start_page = request.args.get('page', 1, type=int)  # 获取动态页要显示动态的起始页
-    end_page = current_app.config['POSTS_PER_PAGE']  # 获取动态页要显示动态的终止页
-    posts = Post.query.order_by(Post.timestamp.desc()).paginate(start_page, end_page, False)
+    posts_per_page = current_app.config['POSTS_PER_PAGE']  # 获取动态页要显示动态的终止页
+    posts = Post.query.order_by(Post.timestamp.desc()).paginate(start_page, posts_per_page, False)
 
     next_url = url_for('main.explore', page=posts.next_num) if posts.has_next else None
     prev_url = url_for('main.explore', page=posts.prev_num) if posts.has_prev else None
@@ -90,8 +90,8 @@ def user(username):
     """用户视图"""
     user = User.query.filter_by(username=username).first_or_404()
     strart_page = request.args.get('page', 1, type=int)
-    end_page = current_app.config['POSTS_PER_PAGE']
-    posts = user.posts.order_by(Post.timestamp.desc()).paginate(strart_page, end_page, False)
+    posts_per_page = current_app.config['POSTS_PER_PAGE']
+    posts = user.posts.order_by(Post.timestamp.desc()).paginate(strart_page, posts_per_page, False)
     next_url = url_for('main.user', username=user.username, page=posts.next_num) if posts.has_next else None
     prev_url = url_for('main.user', username=user.username, page=posts.prev_num) if posts.has_prev else None
     return render_template('user.html', user=user, posts=posts.items, next_url=next_url, prev_url=prev_url)

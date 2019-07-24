@@ -58,6 +58,9 @@ def create_app(config_class=Config):
     from app.main import bp as main_bp
     app.register_blueprint(main_bp)
 
+    from app.api import bp as api_bp  # 向应用注册API blueprint
+    app.register_blueprint(api_bp, url_prefix='/api')
+
     if app.config['SEND_MAIL'] and not app.debug and not app.testing:  # 在Debug和单元测试期间跳过所有这些日志记录
         if app.config['MAIL_SERVER']:
             auth = None

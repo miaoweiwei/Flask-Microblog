@@ -22,6 +22,8 @@
     guess-language_spirit
     requests
     elasticsearch
+    httpie
+    flask-httpauth
     rq
     pymysql
     

@@ -7,14 +7,18 @@
 @Software: PyCharm
 @Desc    : 数据库模型
 """
+import base64
 import json
-from datetime import datetime
+import os
+from datetime import datetime, timedelta
 from hashlib import md5
 from time import time
-from flask import current_app
+
+import jwt
+from flask import current_app, url_for
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
-import jwt
+
 from app import db, login
 from app.search import add_to_index, remove_from_index, query_index
 
@@ -63,6 +67,50 @@ class SearchableMixin(object):
             add_to_index(cls.__tablename__, obj)
 
 
+class PaginatedAPIMixin(object):
+    """用于分页"""
+
+    @staticmethod
+    def to_collection_dict(query, page, per_page, endpoint, **kwargs):
+        """产生一个带有用户集合表示的字典
+        :param query: Flask-SQLAlchemy查询对象
+        :param page: 页码
+        :param per_page: 每页数据数量
+        :param endpoint: 在endpoint参数中传递的值，来确定需要发送到url_for()的视图函数
+        :param kwargs: 视图函数的参数
+        :return:
+        """
+        """
+        items是用户资源的列表，
+        _meta部分包含集合的元数据，客户端在向用户渲染分页控件时就会用得上
+        _links部分定义了相关链接，包括集合本身的链接以及上一页和下一页链接，也能帮助客户端对列表进行分页。
+        """
+        #  该实现使用查询对象的paginate()方法来获取该页的条目，就像我对主页，发现页和个人主页中的用户动态所做的一样。
+        resources = query.paginate(page, per_page, False)
+        data = {
+            'items': [item.to_dict() for item in resources.items],
+            '_meta': {
+                'page': page,
+                'per_page': per_page,
+                'total_pages': resources.pages,
+                'total_items': resources.total
+            },
+            '_links': {
+                'self': url_for(endpoint, page=page, per_page=per_page, **kwargs),
+                'next': url_for(endpoint, page=page + 1, per_page=per_page, **kwargs) if resources.has_next else None,
+                'prev': url_for(endpoint, page=page - 1, per_page=per_page, **kwargs) if resources.has_prev else None
+            }
+        }
+        """复杂的部分是生成链接，其中包括自引用以及指向下一页和上一页的链接。 我想让这个函数具有通用性，
+        所以我不能使用类似url_for('api.get_users', id=id, page=page)这样的代码来生成自链接
+        （译者注：因为这样就固定成用户资源专用了）。 url_for()的参数将取决于特定的资源集合，
+        所以我将依赖于调用者在endpoint参数中传递的值，来确定需要发送到url_for()的视图函数。 
+        由于许多路由都需要参数，我还需要在kwargs中捕获更多关键字参数，并将它们传递给url_for()。
+         page和per_page查询字符串参数是明确给出的，因为它们控制所有API路由的分页。
+         """
+        return data
+
+
 # 监听提交之前和之后的事件,请注意，db.event.listen()调用不在类内部，而是在其后面。 这两行代码设置了每次提交之前和之后调用的事件处理程序。
 db.event.listen(db.session, 'before_commit', SearchableMixin.before_commit)
 db.event.listen(db.session, 'after_commit', SearchableMixin.after_commit)
@@ -76,7 +124,7 @@ followers = db.Table('followers',
 
 # 创建的User类继承自db.Model 实际上是一个表，它是Flask-SQLAlchemy中所有模型的基类这个类将表的字段定义为类属性，
 # 字段被创建为db.Column类的实例，它传入字段类型以及其他可选参数
-class User(UserMixin, db.Model):
+class User(PaginatedAPIMixin, UserMixin, db.Model):
     """用户表"""
     id = db.Column(db.Integer, primary_key=True)  # 字段 id ，主键
     username = db.Column(db.String(64), index=True, unique=True)  # unique表示唯一的
@@ -84,6 +132,8 @@ class User(UserMixin, db.Model):
     password_hash = db.Column(db.String(128))
     about_me = db.Column(db.String(140))
     last_seen = db.Column(db.DateTime, default=datetime.utcnow)  # 注意datetime.utcnow不要写成datetime.utcnow()
+    token = db.Column(db.String(32), index=True, unique=True)  # 需要通过它搜索数据库，所以我为它设置了唯一性和索引
+    token_expiration = db.Column(db.DateTime)  # 保存token过期的日期和时间。 这使得token不会长时间有效，以免成为安全风险。
     posts = db.relationship('Post', backref='author', lazy='dynamic')
     # 第一个参数表示右侧实体
     # secondary 指定了用于该关系的关联表，就是使用我在上面定义的followers。
@@ -216,6 +266,81 @@ class User(UserMixin, db.Model):
         n = Notification(name=name, payload_json=json.dumps(data), user=self)
         db.session.add(n)
         return n
+
+    def to_dict(self, include_email=False):
+        """ 该方法相当于序列化，该方法返回一个Python字典:表示User模型
+        :param include_email:email字段需要特殊处理，因为我只想在用户请求自己的数据时才包含电子邮件。
+        :return:
+        """
+        data = {
+            'id': self.id,
+            'username': self.username,
+            'last_seen': self.last_seen.isoformat() + 'Z',
+            'about_me': self.about_me,
+            'post_count': self.posts.count(),
+            'follower_count': self.followers.count(),
+            'followed_count': self.followed.count(),
+            '_links': {
+                'self': url_for('api.get_user', id=self.id),
+                'followers': url_for('api.get_followers', id=self.id),
+                'followed': url_for('api.get_followed', id=self.id),
+                'avatar': self.avatar(128)  # 头像链接是特殊的，因为它是应用外部的Gravatar URL
+            }
+        }
+        """
+        注意一下last_seen字段的生成。 对于日期和时间字段，我将使用ISO 8601格式，
+        Python的datetime对象可以通过isoformat()方法生成这样格式的字符串。 
+        但是因为我使用的datetime对象的时区是UTC，且但没有在其状态中记录时区，
+        所以我需要在末尾添加Z，即ISO 8601的UTC时区代码。
+        """
+        if include_email:
+            data['email'] = self.email
+        return data
+
+    def from_dict(self, data, new_user=False):
+        """ 该函数相当于反序列化，实现从Python字典到User对象的转换
+        :param data:
+        :param new_user:
+        """
+        for field in ['username', 'email', 'about_me']:
+            if field in data:  # 对于每个字段，我检查它是否存在于data参数中
+                setattr(self, field, data[field])  # 使用Python的setattr()在对象的相应属性中设置新值
+        # password字段被视为特例，因为它不是对象中的字段。 new_user参数确定了这是否是新的用户注册，
+        # 这意味着data中包含password。 要在用户模型中设置密码，需要调用set_password()方法来创建密码哈希。
+        if new_user and 'password' in data:
+            self.set_password(data['password'])
+
+    def get_token(self, expires_in=3600):
+        """ 为用户返回一个token
+        :param expires_in: token 有效时间
+        :return:
+        """
+        now = datetime.utcnow()
+        # 在创建新token之前，此方法会检查当前分配的token在到期之前是否至少还剩一分钟，并且在这种情况下会返回现有的token。
+        if self.token and self.token_expiration > now + timedelta(seconds=60):
+            return self.token
+        # 以base64编码的24位随机字符串来生成这个token，以便所有字符都处于可读字符串范围内
+        self.token = base64.b64encode(os.urandom(24)).decode('utf-8')
+        self.token_expiration = now + timedelta(seconds=expires_in)
+        db.session.add(self)
+        return self.token
+
+    def revoke_token(self):
+        """使用token时，有一个策略可以立即使token失效总是一件好事，而不是仅依赖到期日期。 这是一个经常被忽视的安全最佳实践。
+            revoke_token()方法使得当前分配给用户的token失效，只需设置到期时间为当前时间的前一秒。
+        """
+        self.token_expiration = datetime.utcnow() - timedelta(seconds=1)
+
+    @staticmethod
+    def check_token(token):
+        """ check_token()方法是一个静态方法，它将一个token作为参数传入并返回此token所属的用户。 如果token无效或过期，则该方法返回None。
+        :param token:
+        :return:
+        """
+        user = User.query.filter_by(token=token).first()
+        if user is None or user.token_expiration < datetime.utcnow():  # 检查是否过期
+            return None
+        return user
 
 
 # 插件期望应用配置一个用户加载函数，可以调用该函数来加载给定ID的用户

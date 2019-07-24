@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2019-07-21 14:32+0800\n"
+"POT-Creation-Date: 2019-07-24 10:59+0800\n"
 "PO-Revision-Date: 2019-06-28 19:41+0800\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: zh\n"
@@ -107,7 +107,7 @@ msgstr "提交"
 msgid "Release"
 msgstr "发布"
 
-#: app/main/forms.py:43 app/main/routes.py:176
+#: app/main/forms.py:43 app/main/routes.py:175
 msgid "Search"
 msgstr "搜索"
 
@@ -115,54 +115,54 @@ msgstr "搜索"
 msgid "Message"
 msgstr "信息"
 
-#: app/main/routes.py:49
+#: app/main/routes.py:48
 msgid "Your post is now live!"
 msgstr "发布成功！"
 
-#: app/main/routes.py:65 app/templates/base.html:25
+#: app/main/routes.py:64 app/templates/base.html:25
 msgid "Home"
 msgstr "主页"
 
-#: app/main/routes.py:82 app/templates/base.html:26
+#: app/main/routes.py:81 app/templates/base.html:26
 msgid "Explore"
 msgstr "发现"
 
-#: app/main/routes.py:109
+#: app/main/routes.py:108
 msgid "Your changes have been saved."
 msgstr "你的修改已被保存。"
 
-#: app/main/routes.py:114 app/templates/edit_profile.html:5
+#: app/main/routes.py:113 app/templates/edit_profile.html:5
 msgid "Edit Profile"
 msgstr "编辑个人资料"
 
-#: app/main/routes.py:123 app/main/routes.py:140
+#: app/main/routes.py:122 app/main/routes.py:139
 #, python-format
 msgid "User %(username)s not found."
 msgstr "用户 %(username)s 不存在"
 
-#: app/main/routes.py:126
+#: app/main/routes.py:125
 msgid "You cannot follow yourself!"
 msgstr "你不能关注你自己"
 
-#: app/main/routes.py:130
+#: app/main/routes.py:129
 #, python-format
 msgid "You are following %(username)s!"
 msgstr "你已经成功关注 %(username)s!"
 
-#: app/main/routes.py:143
+#: app/main/routes.py:142
 msgid "You cannot unfollow yourself!"
 msgstr "你无法取消关注自己！"
 
-#: app/main/routes.py:147
+#: app/main/routes.py:146
 #, python-format
 msgid "You are not following %(username)s."
 msgstr "您没有关注 following %(username)s."
 
-#: app/main/routes.py:196
+#: app/main/routes.py:197
 msgid "Your message has been sent."
 msgstr "您的留言发送成功"
 
-#: app/main/routes.py:198
+#: app/main/routes.py:199
 msgid "Send Message"
 msgstr "发送信息"
 
@@ -191,15 +191,15 @@ msgstr "登录"
 msgid "Messages"
 msgstr "消息"
 
-#: app/templates/base.html:47
+#: app/templates/base.html:53
 msgid "Profile"
 msgstr "我的"
 
-#: app/templates/base.html:49
+#: app/templates/base.html:55
 msgid "Logout"
 msgstr "登出"
 
-#: app/templates/base.html:88
+#: app/templates/base.html:94
 msgid "Error: Could not contact server."
 msgstr "错误：无法连接服务器。"
 
@@ -296,11 +296,11 @@ msgstr "重置你的密码"
 
 #: app/templates/errors/404.html:4
 msgid "Not Found"
-msgstr "文件未找到"
+msgstr "很抱歉，您要访问的页面不存在！"
 
 #: app/templates/errors/404.html:5 app/templates/errors/500.html:6
 msgid "Back"
-msgstr "返回"
+msgstr "返回首页"
 
 #: app/templates/errors/500.html:4
 msgid "An unexpected error has occurred"
