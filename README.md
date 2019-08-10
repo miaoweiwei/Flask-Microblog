@@ -40,6 +40,146 @@
 
 ## [数据库](https://github.com/luhuisicnu/The-Flask-Mega-Tutorial-zh/blob/master/docs/%E7%AC%AC%E5%9B%9B%E7%AB%A0%EF%BC%9A%E6%95%B0%E6%8D%AE%E5%BA%93.md)
 [数据库设计工具](https://ondras.zarovi.cz/sql/demo/)  
+
+### 常用的SQLAlchemy字段类型
+
+<table width="960" align="center" border="1" rules="all" cellpadding="15">
+    <tr bgcolor="#ccc">
+        <th>类型名</th>
+        <th>python中类型</th>
+        <th>说明</th>
+    </tr>
+   <tr align="center">
+        <td>Integer</td>
+        <td>int</td>
+        <td>普通整数，一般是32位</td>
+    </tr>
+    <tr align="center">
+        <td>SmallInteger</td>
+        <td>int</td>
+        <td>取值范围小的整数，一般是16位</td>
+	</tr>
+	<tr align="center">
+        <td>BigInteger</td>
+        <td>int或者long</td>
+        <td>不限制精度的整数</td>
+	</tr>
+	<tr align="center">
+        <td>Float</td>
+        <td>float</td>
+        <td>浮点数</td>
+	</tr>
+	<tr align="center">
+        <td>Numeric</td>
+        <td>decimal.Decimal</td>
+        <td>普通整数，一般是32位</td>
+	</tr>
+	<tr align="center">
+        <td>Text</td>
+        <td>str</td>
+        <td>变长字符串，对较长或不限长度的字符串做了优化</td>
+	</tr>
+    <tr align="center">
+        <td>String</td>
+        <td>str</td>
+        <td>变长字符串</td>
+	</tr>
+    <tr align="center">
+        <td>Unicode</td>
+        <td>unicode</td>
+        <td>变长Unicode字符串</td>
+	</tr><tr align="center">
+        <td>UnicodeText</td>
+        <td>unicode</td>
+        <td>变长Unicode字符串，对较长或不限长度的字符串做了优化</td>
+	</tr>
+    <tr align="center">
+        <td>Boolean</td>
+        <td>bool</td>
+        <td>布尔值</td>
+	</tr>
+    <tr align="center">
+        <td>Date</td>
+        <td>datetime.date</td>
+        <td>时间</td>
+	</tr>
+    <tr align="center">
+        <td>Time</td>
+        <td>datetime.datetime</td>
+        <td>日期和时间</td>
+	</tr>
+    <tr align="center">
+        <td>LargeBinary</td>
+        <td>str</td>
+        <td>二进制文件</td>
+	</tr>
+</table>
+
+### 常用的SQLAlchemy列选项
+
+<table width="960" align="center" border="1" rules="all" cellpadding="15">
+    <tr align="center">
+        <td>选项名</td>
+        <td>说明</td>
+	</tr>
+    <tr align="center">
+        <td>primary_key</td>
+        <td>如果为True，代表表的主键</td>
+	</tr>
+    <tr align="center">
+        <td>unique</td>
+        <td>如果为True，代表这列不允许出现重复的值</td>
+	</tr>
+    <tr align="center">
+        <td>index</td>
+        <td>如果为True，为这列创建索引，提高查询效率</td>
+	</tr>
+	    <tr align="center">
+        <td>nullable</td>
+        <td>如果为True，允许有空值，如果为False，不允许有空值</td>
+	</tr>
+	</tr>
+	    <tr align="center">
+        <td>default</td>
+        <td>为这列定义默认值</td>
+	</tr>
+</table>
+
+### 常用的SQLAlchemy关系选项
+
+<table width="960" align="center" border="1" rules="all" cellpadding="15">
+    <tr align="center">
+        <td>选项名</td>
+        <td>说明</td>
+	</tr>
+    <tr align="center">
+        <td>backref</td>
+        <td>在关系的另一模型中添加反向引用</td>
+	</tr>
+    <tr align="center">
+        <td>primaryjoin</td>
+        <td>明确指定两个模型之间使用的联结条件</td>
+	</tr>
+    <tr align="center">
+        <td>uselist</td>
+        <td>如果为False，不使用列表，而使用标量值</td>
+	</tr>
+	    <tr align="center">
+        <td>order_by</td>
+        <td>指定关系中记录的排序方式</td>
+	</tr>
+	</tr>
+	    <tr align="center">
+        <td>secondary</td>
+        <td>指定多对多中记录的排序方式</td>
+	</tr>
+	</tr>
+	    <tr align="center">
+        <td>secondaryjoin</td>
+        <td>在SQLAlchemy中无法自行决定时，指定多对多关系中的二级联结条件</td>
+	</tr>
+</table>
+
 ### 初始化
 Flask-Migrate通过flask命令暴露来它的子命令。 你已经看过flask run，这是一个Flask本身的子命令。 Flask-Migrate添加了flask db子命令来管理与数据库迁移相关的所有事情。 那么让我们通过运行flask db init来创建microblog的迁移存储库：
 
