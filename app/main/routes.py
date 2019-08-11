@@ -148,7 +148,7 @@ def unfollow(username):
 
 
 @bp.route('/translate', methods=['POST'])
-@login_required
+# @login_required # 加上这一句要登录了才能使用翻译
 def translate_text():
     # ms_dic = {'text': ms_translate(request.form['text'],
     #                                request.form['source_language'],
@@ -160,7 +160,7 @@ def translate_text():
 
 
 @bp.route('/search')
-@login_required
+# @login_required # 加上这一句要登录了才能使用搜索
 def search():
     """用于搜索的视图函数"""
     if not g.search_form.validate():

@@ -2,6 +2,17 @@
 {# Flask-Bootstrap派生的基础模板定义了一些块 #}
 {# 提供 title<Web标题>、navbar<导航栏>、content<页面>、scripts<js脚本> #}
 
+{% block head %} {# 显示网站小图标 #}
+    {{ super() }}
+    {% if current_user.is_authenticated %}
+        <link rel="shortcut icon" href="{{ current_user.avatar(64) }}" type="image/x-icon">
+    {% else %}
+        <link rel="shortcut icon" href="{{ url_for('static', filename='microblog.png') }}" type="image/x-icon">
+    {% endif %}
+
+    {#    <link rel="icon" href="{{ url_for('static', filename='icons/fruit.png') }}" type="image/x-icon">#}
+{% endblock %}
+
 <!--页面主题-->
 {% block title %}
     {% if title %}{{ title }} - Microblog{% else %}{{ _('Welcome to Microblog') }}{% endif %}
@@ -83,6 +94,7 @@
     {{ moment.include_moment() }} <!--它直接生成了一个<script>标签并在其中包含moment.js：-->
     <script>
         function translate(sourceElem, destElem, sourceLang, destLang) {
+            {# 要翻译的文本的标签 要显示翻译结果的文本标签 原始语言类型 目标语言类型#}
             $(destElem).html('<img src="{{ url_for('static', filename='loading.gif') }}">');
             $.post('/translate', {
                 text: $(sourceElem).text(),
