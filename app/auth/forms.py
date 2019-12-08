@@ -11,7 +11,7 @@
 """
 from flask_babel import lazy_gettext as _l
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, SubmitField
+from wtforms import StringField, PasswordField, BooleanField, SubmitField, RadioField
 from wtforms.validators import DataRequired, ValidationError, Email, EqualTo
 
 from app.models import User
@@ -24,6 +24,10 @@ class LoginForm(FlaskForm):
     username = StringField(_l('Username'), validators=[DataRequired()])  # 定义用户名字段
     password = PasswordField(_l('Password'), validators=[DataRequired()])  # 定义密码字段
     remember_me = BooleanField(_l('Remember Me'))  # 定义复选框
+    login_type = RadioField(label=_l('Login Type'), choices=(
+        ('Administrator', _l('Administrator')),
+        ('Customer', _l('Customer'))
+    ), default='Administrator')
     submit = SubmitField(_l('Sign In'))  # 定义提交按钮
 
 

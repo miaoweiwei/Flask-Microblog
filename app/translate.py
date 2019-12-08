@@ -12,8 +12,28 @@ import requests
 import random
 from hashlib import md5
 from flask_babel import _
-
+from guess_language import guess_language
 from app import current_app
+
+
+def identify_language(text, baidu=True):
+    """ 识别语言的类型
+    @param text:要识别语言类型的字符串
+    @param baidu:是否使用百度api去识别，不使用百度的api就使用 guess_language 这个python包
+    @return:返回识别结果，就是语言的类型
+    """
+    if not baidu:
+        return guess_language(text)  # 使用识别语言类型的包
+    url = 'https://fanyi.baidu.com/langdetect?query=' + text
+    r = requests.get(url)
+    if r.status_code != 200:
+        print(_('Error : the identify language service failed.'))
+        return ""
+    text = r.content.decode('utf-8-sig')
+    text = json.loads(text)
+    if text['msg'] == 'success':
+        return text['lan']
+    return ''
 
 
 def ms_translate(text, source_language, dest_language):

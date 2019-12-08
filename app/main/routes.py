@@ -15,11 +15,10 @@ from flask import render_template, flash, redirect, url_for, request, g, \
     jsonify, current_app
 from flask_login import current_user, login_required
 from flask_babel import _, get_locale
-from guess_language import guess_language
 from app import db
 from app.main.forms import EditProfileForm, PostForm, SearchForm, MessageForm
 from app.models import User, Post, Message, Notification
-from app.translate import ms_translate, baidu_translate
+from app.translate import identify_language, ms_translate, baidu_translate
 from app.main import bp
 
 
@@ -39,7 +38,7 @@ def before_request():
 def index():
     form = PostForm()
     if form.validate_on_submit():
-        language = guess_language(form.post.data)  # 获取动态的语言类型
+        language = identify_language(form.post.data)  # 获取动态的语言类型
         if language == 'UNKNOWN' or len(language) > 5:
             language = ''
         post = Post(body=form.post.data, author=current_user, language=language)

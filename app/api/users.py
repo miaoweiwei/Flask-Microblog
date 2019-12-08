@@ -121,7 +121,7 @@ Server: Werkzeug/0.15.5 Python/3.7.0
 }
 
 然后在使用这个token去访问其他的api如上面的用户信息api
-(venv) $ http GET http://localhost:5000/api/users/1 Authorization:"Bearer 0rG+SAbpuS3PeOZn1dz/7Ly0IFXB0mu5" 
+(venv) $ http GET http://localhost:5000/api/users/1
 返回
 HTTP/1.0 200 OK
 Content-Length: 440

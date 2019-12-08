@@ -33,5 +33,5 @@ def make_shell_context():
 
 if __name__ == '__main__':
     # debug=True 会使在运行时若代码改动则会使项目重新启动，但这会使项目第一次启动时重启一次
-    app.run(host='0.0.0.0', port=5000)
+    app.run(host='0.0.0.0', port=5002)
     # app.run(host='0.0.0.0', port=5000, debug=True)
